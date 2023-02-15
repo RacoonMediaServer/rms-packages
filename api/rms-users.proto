@@ -3,12 +3,17 @@ syntax = "proto3";
 option go_package = "../rms-users";
 
 service RmsUsers {
-  // Проверяем разрешено ли пользователю с указанным токеном выполнять определенные действия
-  rpc CanAccess(CanAccessRequest) returns (CanAccessResponse);
+  // Получить права доступа с указанным API-токеном
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 }
 
-message CanAccessRequest {
-  enum Action {
+message GetPermissionsRequest {
+  // содержимое X-Token
+  string token = 1;
+}
+
+message GetPermissionsResponse {
+  enum Permissions {
     // поиск через rms-media-discovery
     Search = 0;
 
@@ -19,14 +24,6 @@ message CanAccessRequest {
     AccountManagement = 2;
   }
 
-  // содержимое X-Token
-  string token = 1;
-
-  // тип запрошенного действия
-  Action action = 2;
-}
-
-message CanAccessResponse {
-  bool result = 1;
+  repeated Permissions perms = 1;
 }
 

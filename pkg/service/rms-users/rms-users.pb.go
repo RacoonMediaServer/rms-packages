@@ -20,71 +20,69 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CanAccessRequest_Action int32
+type GetPermissionsResponse_Permissions int32
 
 const (
 	// поиск через rms-media-discovery
-	CanAccessRequest_Search CanAccessRequest_Action = 0
+	GetPermissionsResponse_Search GetPermissionsResponse_Permissions = 0
 	// подключение к боту
-	CanAccessRequest_ConnectingToTheBot CanAccessRequest_Action = 1
+	GetPermissionsResponse_ConnectingToTheBot GetPermissionsResponse_Permissions = 1
 	// управление аккаунтами внешних систем
-	CanAccessRequest_AccountManagement CanAccessRequest_Action = 2
+	GetPermissionsResponse_AccountManagement GetPermissionsResponse_Permissions = 2
 )
 
-// Enum value maps for CanAccessRequest_Action.
+// Enum value maps for GetPermissionsResponse_Permissions.
 var (
-	CanAccessRequest_Action_name = map[int32]string{
+	GetPermissionsResponse_Permissions_name = map[int32]string{
 		0: "Search",
 		1: "ConnectingToTheBot",
 		2: "AccountManagement",
 	}
-	CanAccessRequest_Action_value = map[string]int32{
+	GetPermissionsResponse_Permissions_value = map[string]int32{
 		"Search":             0,
 		"ConnectingToTheBot": 1,
 		"AccountManagement":  2,
 	}
 )
 
-func (x CanAccessRequest_Action) Enum() *CanAccessRequest_Action {
-	p := new(CanAccessRequest_Action)
+func (x GetPermissionsResponse_Permissions) Enum() *GetPermissionsResponse_Permissions {
+	p := new(GetPermissionsResponse_Permissions)
 	*p = x
 	return p
 }
 
-func (x CanAccessRequest_Action) String() string {
+func (x GetPermissionsResponse_Permissions) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (CanAccessRequest_Action) Descriptor() protoreflect.EnumDescriptor {
+func (GetPermissionsResponse_Permissions) Descriptor() protoreflect.EnumDescriptor {
 	return file_rms_users_proto_enumTypes[0].Descriptor()
 }
 
-func (CanAccessRequest_Action) Type() protoreflect.EnumType {
+func (GetPermissionsResponse_Permissions) Type() protoreflect.EnumType {
 	return &file_rms_users_proto_enumTypes[0]
 }
 
-func (x CanAccessRequest_Action) Number() protoreflect.EnumNumber {
+func (x GetPermissionsResponse_Permissions) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CanAccessRequest_Action.Descriptor instead.
-func (CanAccessRequest_Action) EnumDescriptor() ([]byte, []int) {
-	return file_rms_users_proto_rawDescGZIP(), []int{0, 0}
+// Deprecated: Use GetPermissionsResponse_Permissions.Descriptor instead.
+func (GetPermissionsResponse_Permissions) EnumDescriptor() ([]byte, []int) {
+	return file_rms_users_proto_rawDescGZIP(), []int{1, 0}
 }
 
-type CanAccessRequest struct {
+type GetPermissionsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	// содержимое X-Token
 	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	// тип запрошенного действия
-	Action CanAccessRequest_Action `protobuf:"varint,2,opt,name=action,proto3,enum=CanAccessRequest_Action" json:"action,omitempty"`
 }
 
-func (x *CanAccessRequest) Reset() {
-	*x = CanAccessRequest{}
+func (x *GetPermissionsRequest) Reset() {
+	*x = GetPermissionsRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_rms_users_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -92,13 +90,13 @@ func (x *CanAccessRequest) Reset() {
 	}
 }
 
-func (x *CanAccessRequest) String() string {
+func (x *GetPermissionsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CanAccessRequest) ProtoMessage() {}
+func (*GetPermissionsRequest) ProtoMessage() {}
 
-func (x *CanAccessRequest) ProtoReflect() protoreflect.Message {
+func (x *GetPermissionsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_rms_users_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -110,35 +108,28 @@ func (x *CanAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CanAccessRequest.ProtoReflect.Descriptor instead.
-func (*CanAccessRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetPermissionsRequest.ProtoReflect.Descriptor instead.
+func (*GetPermissionsRequest) Descriptor() ([]byte, []int) {
 	return file_rms_users_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CanAccessRequest) GetToken() string {
+func (x *GetPermissionsRequest) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
 	return ""
 }
 
-func (x *CanAccessRequest) GetAction() CanAccessRequest_Action {
-	if x != nil {
-		return x.Action
-	}
-	return CanAccessRequest_Search
-}
-
-type CanAccessResponse struct {
+type GetPermissionsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Result bool `protobuf:"varint,1,opt,name=result,proto3" json:"result,omitempty"`
+	Perms []GetPermissionsResponse_Permissions `protobuf:"varint,1,rep,packed,name=perms,proto3,enum=GetPermissionsResponse_Permissions" json:"perms,omitempty"`
 }
 
-func (x *CanAccessResponse) Reset() {
-	*x = CanAccessResponse{}
+func (x *GetPermissionsResponse) Reset() {
+	*x = GetPermissionsResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_rms_users_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -146,13 +137,13 @@ func (x *CanAccessResponse) Reset() {
 	}
 }
 
-func (x *CanAccessResponse) String() string {
+func (x *GetPermissionsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CanAccessResponse) ProtoMessage() {}
+func (*GetPermissionsResponse) ProtoMessage() {}
 
-func (x *CanAccessResponse) ProtoReflect() protoreflect.Message {
+func (x *GetPermissionsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_rms_users_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -164,41 +155,42 @@ func (x *CanAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CanAccessResponse.ProtoReflect.Descriptor instead.
-func (*CanAccessResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetPermissionsResponse.ProtoReflect.Descriptor instead.
+func (*GetPermissionsResponse) Descriptor() ([]byte, []int) {
 	return file_rms_users_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CanAccessResponse) GetResult() bool {
+func (x *GetPermissionsResponse) GetPerms() []GetPermissionsResponse_Permissions {
 	if x != nil {
-		return x.Result
+		return x.Perms
 	}
-	return false
+	return nil
 }
 
 var File_rms_users_proto protoreflect.FileDescriptor
 
 var file_rms_users_proto_rawDesc = []byte{
 	0x0a, 0x0f, 0x72, 0x6d, 0x73, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x22, 0x9f, 0x01, 0x0a, 0x10, 0x43, 0x61, 0x6e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x30, 0x0a, 0x06,
-	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x43,
-	0x61, 0x6e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e,
-	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x43,
-	0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0a, 0x0a, 0x06, 0x53, 0x65, 0x61, 0x72,
-	0x63, 0x68, 0x10, 0x00, 0x12, 0x16, 0x0a, 0x12, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69,
-	0x6e, 0x67, 0x54, 0x6f, 0x54, 0x68, 0x65, 0x42, 0x6f, 0x74, 0x10, 0x01, 0x12, 0x15, 0x0a, 0x11,
-	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e,
-	0x74, 0x10, 0x02, 0x22, 0x2b, 0x0a, 0x11, 0x43, 0x61, 0x6e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75,
-	0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74,
-	0x32, 0x3e, 0x0a, 0x08, 0x52, 0x6d, 0x73, 0x55, 0x73, 0x65, 0x72, 0x73, 0x12, 0x32, 0x0a, 0x09,
-	0x43, 0x61, 0x6e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x11, 0x2e, 0x43, 0x61, 0x6e, 0x41,
-	0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x43,
-	0x61, 0x6e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2e, 0x2f, 0x72, 0x6d, 0x73, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x73,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x22, 0x2d, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x22, 0x9d, 0x01, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x05, 0x70,
+	0x65, 0x72, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x23, 0x2e, 0x47, 0x65, 0x74,
+	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x2e, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x52,
+	0x05, 0x70, 0x65, 0x72, 0x6d, 0x73, 0x22, 0x48, 0x0a, 0x0b, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73,
+	0x73, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x0a, 0x0a, 0x06, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x10,
+	0x00, 0x12, 0x16, 0x0a, 0x12, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6e, 0x67, 0x54,
+	0x6f, 0x54, 0x68, 0x65, 0x42, 0x6f, 0x74, 0x10, 0x01, 0x12, 0x15, 0x0a, 0x11, 0x41, 0x63, 0x63,
+	0x6f, 0x75, 0x6e, 0x74, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x10, 0x02,
+	0x32, 0x4d, 0x0a, 0x08, 0x52, 0x6d, 0x73, 0x55, 0x73, 0x65, 0x72, 0x73, 0x12, 0x41, 0x0a, 0x0e,
+	0x47, 0x65, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x16,
+	0x2e, 0x47, 0x65, 0x74, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x65, 0x72, 0x6d,
+	0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42,
+	0x0e, 0x5a, 0x0c, 0x2e, 0x2e, 0x2f, 0x72, 0x6d, 0x73, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -216,14 +208,14 @@ func file_rms_users_proto_rawDescGZIP() []byte {
 var file_rms_users_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_rms_users_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_rms_users_proto_goTypes = []interface{}{
-	(CanAccessRequest_Action)(0), // 0: CanAccessRequest.Action
-	(*CanAccessRequest)(nil),     // 1: CanAccessRequest
-	(*CanAccessResponse)(nil),    // 2: CanAccessResponse
+	(GetPermissionsResponse_Permissions)(0), // 0: GetPermissionsResponse.Permissions
+	(*GetPermissionsRequest)(nil),           // 1: GetPermissionsRequest
+	(*GetPermissionsResponse)(nil),          // 2: GetPermissionsResponse
 }
 var file_rms_users_proto_depIdxs = []int32{
-	0, // 0: CanAccessRequest.action:type_name -> CanAccessRequest.Action
-	1, // 1: RmsUsers.CanAccess:input_type -> CanAccessRequest
-	2, // 2: RmsUsers.CanAccess:output_type -> CanAccessResponse
+	0, // 0: GetPermissionsResponse.perms:type_name -> GetPermissionsResponse.Permissions
+	1, // 1: RmsUsers.GetPermissions:input_type -> GetPermissionsRequest
+	2, // 2: RmsUsers.GetPermissions:output_type -> GetPermissionsResponse
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -238,7 +230,7 @@ func file_rms_users_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_rms_users_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CanAccessRequest); i {
+			switch v := v.(*GetPermissionsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -250,7 +242,7 @@ func file_rms_users_proto_init() {
 			}
 		}
 		file_rms_users_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CanAccessResponse); i {
+			switch v := v.(*GetPermissionsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
