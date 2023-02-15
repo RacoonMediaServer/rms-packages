@@ -36,8 +36,8 @@ func NewRmsUsersEndpoints() []*api.Endpoint {
 // Client API for RmsUsers service
 
 type RmsUsersService interface {
-	// Проверяем разрешено ли пользователю с указанным токеном выполнять определенные действия
-	CanAccess(ctx context.Context, in *CanAccessRequest, opts ...client.CallOption) (*CanAccessResponse, error)
+	// Получить права доступа с указанным API-токеном
+	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...client.CallOption) (*GetPermissionsResponse, error)
 }
 
 type rmsUsersService struct {
@@ -52,9 +52,9 @@ func NewRmsUsersService(name string, c client.Client) RmsUsersService {
 	}
 }
 
-func (c *rmsUsersService) CanAccess(ctx context.Context, in *CanAccessRequest, opts ...client.CallOption) (*CanAccessResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsUsers.CanAccess", in)
-	out := new(CanAccessResponse)
+func (c *rmsUsersService) GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...client.CallOption) (*GetPermissionsResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsUsers.GetPermissions", in)
+	out := new(GetPermissionsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,13 +65,13 @@ func (c *rmsUsersService) CanAccess(ctx context.Context, in *CanAccessRequest, o
 // Server API for RmsUsers service
 
 type RmsUsersHandler interface {
-	// Проверяем разрешено ли пользователю с указанным токеном выполнять определенные действия
-	CanAccess(context.Context, *CanAccessRequest, *CanAccessResponse) error
+	// Получить права доступа с указанным API-токеном
+	GetPermissions(context.Context, *GetPermissionsRequest, *GetPermissionsResponse) error
 }
 
 func RegisterRmsUsersHandler(s server.Server, hdlr RmsUsersHandler, opts ...server.HandlerOption) error {
 	type rmsUsers interface {
-		CanAccess(ctx context.Context, in *CanAccessRequest, out *CanAccessResponse) error
+		GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error
 	}
 	type RmsUsers struct {
 		rmsUsers
@@ -84,6 +84,6 @@ type rmsUsersHandler struct {
 	RmsUsersHandler
 }
 
-func (h *rmsUsersHandler) CanAccess(ctx context.Context, in *CanAccessRequest, out *CanAccessResponse) error {
-	return h.RmsUsersHandler.CanAccess(ctx, in, out)
+func (h *rmsUsersHandler) GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error {
+	return h.RmsUsersHandler.GetPermissions(ctx, in, out)
 }
