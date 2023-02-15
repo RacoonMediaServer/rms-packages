@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "../rms-users";
+
+service RmsUsers {
+  // Проверяем разрешено ли пользователю с указанным токеном выполнять определенные действия
+  rpc CanAccess(CanAccessRequest) returns (CanAccessResponse);
+}
+
+message CanAccessRequest {
+  enum Action {
+    // поиск через rms-media-discovery
+    Search = 0;
+
+    // подключение к боту
+    ConnectingToTheBot = 1;
+
+    // управление аккаунтами внешних систем
+    AccountManagement = 2;
+  }
+
+  // содержимое X-Token
+  string token = 1;
+
+  // тип запрошенного действия
+  Action action = 2;
+}
+
+message CanAccessResponse {
+  bool result = 1;
+}
+
