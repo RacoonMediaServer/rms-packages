@@ -7,23 +7,23 @@ service RmsUsers {
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 }
 
+enum Permissions {
+  // поиск через rms-media-discovery
+  Search = 0;
+
+  // подключение к боту
+  ConnectingToTheBot = 1;
+
+  // управление аккаунтами внешних систем
+  AccountManagement = 2;
+}
+
 message GetPermissionsRequest {
   // содержимое X-Token
   string token = 1;
 }
 
 message GetPermissionsResponse {
-  enum Permissions {
-    // поиск через rms-media-discovery
-    Search = 0;
-
-    // подключение к боту
-    ConnectingToTheBot = 1;
-
-    // управление аккаунтами внешних систем
-    AccountManagement = 2;
-  }
-
   repeated Permissions perms = 1;
 }
 
