@@ -1,0 +1,18 @@
+syntax = "proto3";
+package communication;
+
+option go_package = "../communication";
+
+import "google/protobuf/timestamp.proto";
+
+// Telegram message from user to device
+message UserMessage {
+  string text = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+// Message from Telegram bot client to user
+message BotMessage {
+  string text = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
