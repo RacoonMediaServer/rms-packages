@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-bot-server";
+
+service RmsBotServer {
+  // Дропнуть сессию с указанным ключем
+  rpc DropSession(DropSessionRequest) returns (google.protobuf.Empty);
+}
+
+message DropSessionRequest {
+  // Токен
+  string token = 1;
+}
+
