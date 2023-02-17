@@ -5,14 +5,28 @@ option go_package = "../communication";
 
 import "google/protobuf/timestamp.proto";
 
-// Telegram message from user to device
-message UserMessage {
-  string text = 1;
-  google.protobuf.Timestamp timestamp = 2;
+// Type of Message
+enum MessageType {
+  // Usual communicating messages between user and device
+  Interaction = 0;
+
+  // Message sends by device for requesting linkage code
+  AcquiringCode = 1;
+
+  // Message sends by server for provide linkage code
+  LinkageCode = 2;
 }
 
-// Message from Telegram bot client to user
+// Telegram message from user to device
+message UserMessage {
+  MessageType type = 1;
+  string text = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+// Message from Telegram bot to user
 message BotMessage {
-  string text = 1;
-  google.protobuf.Timestamp timestamp = 2;
+  MessageType type = 1;
+  string text = 2;
+  google.protobuf.Timestamp timestamp = 3;
 }
