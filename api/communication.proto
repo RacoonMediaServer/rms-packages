@@ -24,9 +24,36 @@ message UserMessage {
   google.protobuf.Timestamp timestamp = 3;
 }
 
+// Button defines Telegram chat button, associated with message
+message Button {
+  string title = 1;
+  string command = 2;
+}
+
+// Different keyboard styles
+enum KeyboardStyle {
+  Chat = 0;
+  Message = 1;
+}
+
+// Attachment provide ability to attach media data to message
+message Attachment {
+  enum Type {
+    PhotoURL = 0;
+    Photo = 1;
+    Video = 2;
+  }
+  Type type = 1;
+  string mimeType = 2;
+  bytes Content = 3;
+}
+
 // Message from Telegram bot to user
 message BotMessage {
   MessageType type = 1;
   string text = 2;
   google.protobuf.Timestamp timestamp = 3;
+  repeated Button buttons = 4;
+  KeyboardStyle keyboardStyle = 5;
+  optional Attachment attachment = 6;
 }
