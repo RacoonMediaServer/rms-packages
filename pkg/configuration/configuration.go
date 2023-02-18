@@ -17,6 +17,18 @@ type Database struct {
 	Database string
 }
 
+// Monitor is monitoring settings
+type Monitor struct {
+	Host string
+	Port int
+}
+
+// Http settings of the web server
+type Http struct {
+	Host string
+	Port int
+}
+
 // Load read and parses configuration file. Also override some fields via environment variables
 // Ex. you can set environment variable RMS_DATABASE_USER which override value root / database / user
 func Load(configFile string, configuration interface{}) error {
