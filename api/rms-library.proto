@@ -1,0 +1,137 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-library";
+
+service RmsLibrary {
+  // поиск информации о фильмах и сериалах во внешних источниках
+  rpc SearchMovie(SearchMovieRequest) returns (SearchMovieResponse);
+
+  // скачать указанный фильм или сериал
+  rpc DownloadMovie(DownloadMovieRequest) returns (DownloadMovieResponse);
+
+  // получить список доступных новых сезонов для скачивания
+  rpc GetTvSeriesUpdates(google.protobuf.Empty) returns (GetTvSeriesUpdatesResponse);
+
+  // получить информацию о фильме/сериале по его ID
+  rpc GetMovieInfo(GetMovieInfoRequest) returns (MovieInfo);
+
+  // получить список всех фильмов/сериалов
+  rpc GetMovies(GetMoviesRequest) returns (GetMoviesResponse);
+
+  // получить раскладку директорий, связанную с тем как хранится контент
+  rpc GetMovieLayout(GetMovieLayoutRequest) returns (GetMovieLayoutResponse);
+}
+
+// запрос на поиск во внешних источниках
+message SearchMovieRequest {
+  string text = 1;
+  uint32 limit = 2;
+}
+
+// тип медиа - фильм или сериал
+enum MovieType {
+  TvSeries = 0;
+  Film = 1;
+}
+
+// структура описывает общую информацию о фильме/сериале
+message MovieInfo {
+  string title = 1;
+  string description = 2;
+  uint32 year = 3;
+  string poster = 4;
+  repeated string genres = 5;
+  float rating = 6;
+  MovieType type = 7;
+  optional uint32 seasons = 8;
+}
+
+// запрос получения инфы о фильме/сериале по его ID
+message GetMovieInfoRequest {
+  string id = 1;
+}
+
+// результат поиска по внешних источниках
+message FoundMovie {
+  // сквозной ID фильма/сериала
+  string id = 1;
+
+  // общая информация о Movie
+  MovieInfo info = 2;
+
+  // информация о скачанных сезонах
+  repeated uint32 seasonsDownloaded = 3;
+}
+
+// результат поиска - несколько вариантов фильма/сериала
+message SearchMovieResponse {
+  repeated FoundMovie movies = 1;
+}
+
+// скачать указанный фильм, или сезон сериала
+message DownloadMovieRequest {
+  // сквозной ID фильма/сериала
+  string id = 1;
+
+  // скачать другую версию
+  bool otherVersion = 2;
+
+  // какой сезон скачать, если не указан - скачать отсутствующие в библиотеке сезоны
+  optional uint32 season = 3;
+}
+
+message DownloadMovieResponse {
+  // удалось ли найти раздачи
+  bool found = 1;
+  // какие сезоны были поставлены на закачку
+  repeated uint32 seasons = 2;
+}
+
+// инфа о новых сезонах одного сериала
+message TvSeriesUpdate {
+  // сквозной ID фильма/сериала
+  string id = 1;
+
+  // общая информация о Movie
+  MovieInfo info = 2;
+
+  // перечисление новых доступных сезонов
+  repeated uint32 seasonsAvailable = 3;
+}
+
+// результат запроса обновления сериалов
+message GetTvSeriesUpdatesResponse {
+  repeated TvSeriesUpdate updates = 1;
+}
+
+// запрос доступных киношек в библиотеке
+message GetMoviesRequest {
+  enum AllowedTypes {
+    Films = 0;
+    TvSeries = 1;
+    Both = 2;
+  }
+  // какого типа элементы отображать
+  AllowedTypes types = 1;
+
+  // поиск по жанрам
+  optional string genre = 2;
+}
+
+message GetMoviesResponse {
+  repeated FoundMovie results = 1;
+}
+
+message GetMovieLayoutRequest {
+  // ID фильма/сериала
+  string id = 1;
+
+  // Для сериала должны указать сезон
+  optional uint32 season = 2;
+}
+
+message GetMovieLayoutResponse {
+  // TODO: хорошо подумать над этим
+}
+
