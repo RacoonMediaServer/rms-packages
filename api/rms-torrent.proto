@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-torrent";
+
+service RmsTorrent {
+  // Скачать торрент
+  rpc Download(DownloadRequest) returns (DownloadResponse);
+  rpc GetTorrentInfo(GetTorrentInfoRequest) returns (TorrentInfo);
+  rpc GetTorrents(GetTorrentsRequest) returns (GetTorrentsResponse);
+  rpc RemoveTorrent(RemoveTorrentRequest) returns (google.protobuf.Empty);
+  rpc UpPriority(UpPriorityRequest) returns (google.protobuf.Empty);
+}
+
+message DownloadRequest {
+  // Содержимое торрент-файла или магнет-ссылка
+  bytes what = 1;
+  // Текстовое описание контента (нужно для отправки события)
+  string description = 2;
+}
+
+message DownloadResponse {
+  // ID торрента
+  string id = 1;
+  // Пути к файлам, которые входят в раздачу
+  repeated string files = 2;
+}
+message GetTorrentInfoRequest {string id = 1;}
+
+enum Status {
+  Pending = 0;
+  Downloading = 1;
+  Done = 2;
+  Failed = 3;
+}
+
+message TorrentInfo {
+  string id = 1;
+  string title = 2;
+  Status status = 3;
+  float progress = 4;
+  int64 estimate = 5;
+}
+message GetTorrentsRequest {bool includeDoneTorrents = 1;}
+message GetTorrentsResponse {repeated TorrentInfo torrents = 1;}
+message RemoveTorrentRequest {string id = 1;}
+message UpPriorityRequest{string id = 1;}
