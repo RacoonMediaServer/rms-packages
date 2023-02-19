@@ -1,6 +1,7 @@
 package servicemgr
 
 import (
+	rms_bot_client "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-client"
 	rms_bot_server "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-server"
 	rms_library "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-library"
 	rms_torrent "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-torrent"
@@ -12,6 +13,7 @@ import (
 //go:generate ../rms-bot-server/gen.sh
 //go:generate ../rms-library/gen.sh
 //go:generate ../rms-torrent/gen.sh
+//go:generate ../rms-bot-client/gen.sh
 
 // ClientFactory can spawn microservices clients
 type ClientFactory interface {
@@ -46,4 +48,9 @@ func (f ServiceFactory) NewLibrary() rms_library.RmsLibraryService {
 // NewTorrent creates connection to rms-library service
 func (f ServiceFactory) NewTorrent() rms_torrent.RmsTorrentService {
 	return rms_torrent.NewRmsTorrentService("rms-torrent", f.constructor.Client())
+}
+
+// NewBotClient creates connection to rms-bot-client service
+func (f ServiceFactory) NewBotClient() rms_bot_client.RmsBotClientService {
+	return rms_bot_client.NewRmsBotClientService("rms-bot-client", f.constructor.Client())
 }

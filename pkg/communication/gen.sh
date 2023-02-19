@@ -1,4 +1,4 @@
 #!/bin/bash
 
 PATH="$PATH:$GOBIN"
-protoc --proto_path=../../api/:.  --go_out=. communication.proto
+protoc --proto_path=../../api/:.  --go_out=paths=source_relative:. communication.proto

@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "communication.proto";
+
+option go_package = "../rms-bot-client";
+
+service RmsBotClient {
+  // Получить код для идентификации на сервере
+  rpc GetIdentificationCode(google.protobuf.Empty) returns (GetIdentificationCodeResponse);
+
+  // Отправить сообщение в бот
+  rpc SendMessage(communication.BotMessage) returns (google.protobuf.Empty);
+}
+
+message GetIdentificationCodeResponse {
+  string code = 1;
+}
+
