@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+option go_package = "../events";
+
+// User information notifications
+message Notification {
+  enum Kind {
+    // Torrent done
+    DownloadComplete = 0;
+
+    // Something wrong with torrent
+    DownloadFailed = 1;
+
+    // Error raises during transcoding
+    TranscodingFailed = 2;
+  }
+
+  Kind kind = 1;
+  optional string torrentID = 2;
+  optional string mediaID = 3;
+  optional string itemTitle = 4;
+}
+
+// Notification about malfunctions and any problems in the entire system
+message Malfunction {
+  enum System {
+    Cameras = 0;
+    Archive = 1;
+    Services = 2;
+    Media = 3;
+  }
+  enum Code {
+    Unknown = 0;
+    CannotAccess = 1;
+    NotEnoughSpace = 2;
+  }
+  int64 timestamp = 1;
+  string error = 2;
+  System system = 3;
+  Code code = 4;
+  string stackTrace = 5;
+}
+
+// CCTV security alerts
+message Alert {
+  enum Kind {
+    MotionDetected = 0;
+    TamperDetected = 1;
+    CrossLineDetected = 2;
+    GuestDetected = 3;
+    IntrusionDetected = 4;
+  }
+  int64 timestamp = 1;
+  string camera = 2;
+  Kind kind = 3;
+  bytes image = 4;
+  uint64 durationSec = 5; // длительность события (мб предполагаемая)
+  uint64 extraOffsetSec = 6; // сколько еще захватить секунд с обоих концов
+}
