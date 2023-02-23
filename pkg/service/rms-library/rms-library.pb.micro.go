@@ -39,16 +39,18 @@ func NewRmsLibraryEndpoints() []*api.Endpoint {
 type RmsLibraryService interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
 	SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...client.CallOption) (*SearchMovieResponse, error)
-	// скачать указанный фильм или сериал
-	DownloadMovie(ctx context.Context, in *DownloadMovieRequest, opts ...client.CallOption) (*DownloadMovieResponse, error)
+	// скачать указанный фильм или сериал в автоматическом режиме
+	DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error)
+	// найти варианты раздачи для фильма или сериала
+	FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	// найти на торрентах просто какой то контент без привзяки к типу
+	FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	// скачать выбранную раздачу
+	DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error)
-	// получить информацию о фильме/сериале по его ID
-	GetMovieInfo(ctx context.Context, in *GetMovieInfoRequest, opts ...client.CallOption) (*MovieInfo, error)
-	// получить список всех фильмов/сериалов
+	// получить список фильмов/сериалов и пути к их контенту
 	GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error)
-	// получить раскладку директорий, связанную с тем как хранится контент
-	GetMovieLayout(ctx context.Context, in *GetMovieLayoutRequest, opts ...client.CallOption) (*GetMovieLayoutResponse, error)
 }
 
 type rmsLibraryService struct {
@@ -73,9 +75,39 @@ func (c *rmsLibraryService) SearchMovie(ctx context.Context, in *SearchMovieRequ
 	return out, nil
 }
 
-func (c *rmsLibraryService) DownloadMovie(ctx context.Context, in *DownloadMovieRequest, opts ...client.CallOption) (*DownloadMovieResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.DownloadMovie", in)
-	out := new(DownloadMovieResponse)
+func (c *rmsLibraryService) DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.DownloadMovieAuto", in)
+	out := new(DownloadMovieAutoResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsLibraryService) FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.FindMovieTorrents", in)
+	out := new(FindTorrentsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsLibraryService) FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.FindTorrents", in)
+	out := new(FindTorrentsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsLibraryService) DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.DownloadTorrent", in)
+	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -93,29 +125,9 @@ func (c *rmsLibraryService) GetTvSeriesUpdates(ctx context.Context, in *emptypb.
 	return out, nil
 }
 
-func (c *rmsLibraryService) GetMovieInfo(ctx context.Context, in *GetMovieInfoRequest, opts ...client.CallOption) (*MovieInfo, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovieInfo", in)
-	out := new(MovieInfo)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *rmsLibraryService) GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovies", in)
 	out := new(GetMoviesResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsLibraryService) GetMovieLayout(ctx context.Context, in *GetMovieLayoutRequest, opts ...client.CallOption) (*GetMovieLayoutResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovieLayout", in)
-	out := new(GetMovieLayoutResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -128,26 +140,29 @@ func (c *rmsLibraryService) GetMovieLayout(ctx context.Context, in *GetMovieLayo
 type RmsLibraryHandler interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
 	SearchMovie(context.Context, *SearchMovieRequest, *SearchMovieResponse) error
-	// скачать указанный фильм или сериал
-	DownloadMovie(context.Context, *DownloadMovieRequest, *DownloadMovieResponse) error
+	// скачать указанный фильм или сериал в автоматическом режиме
+	DownloadMovieAuto(context.Context, *DownloadMovieAutoRequest, *DownloadMovieAutoResponse) error
+	// найти варианты раздачи для фильма или сериала
+	FindMovieTorrents(context.Context, *FindMovieTorrentsRequest, *FindTorrentsResponse) error
+	// найти на торрентах просто какой то контент без привзяки к типу
+	FindTorrents(context.Context, *FindTorrentsRequest, *FindTorrentsResponse) error
+	// скачать выбранную раздачу
+	DownloadTorrent(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(context.Context, *emptypb.Empty, *GetTvSeriesUpdatesResponse) error
-	// получить информацию о фильме/сериале по его ID
-	GetMovieInfo(context.Context, *GetMovieInfoRequest, *MovieInfo) error
-	// получить список всех фильмов/сериалов
+	// получить список фильмов/сериалов и пути к их контенту
 	GetMovies(context.Context, *GetMoviesRequest, *GetMoviesResponse) error
-	// получить раскладку директорий, связанную с тем как хранится контент
-	GetMovieLayout(context.Context, *GetMovieLayoutRequest, *GetMovieLayoutResponse) error
 }
 
 func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...server.HandlerOption) error {
 	type rmsLibrary interface {
 		SearchMovie(ctx context.Context, in *SearchMovieRequest, out *SearchMovieResponse) error
-		DownloadMovie(ctx context.Context, in *DownloadMovieRequest, out *DownloadMovieResponse) error
+		DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error
+		FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error
+		FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error
+		DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
 		GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error
-		GetMovieInfo(ctx context.Context, in *GetMovieInfoRequest, out *MovieInfo) error
 		GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
-		GetMovieLayout(ctx context.Context, in *GetMovieLayoutRequest, out *GetMovieLayoutResponse) error
 	}
 	type RmsLibrary struct {
 		rmsLibrary
@@ -164,22 +179,26 @@ func (h *rmsLibraryHandler) SearchMovie(ctx context.Context, in *SearchMovieRequ
 	return h.RmsLibraryHandler.SearchMovie(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) DownloadMovie(ctx context.Context, in *DownloadMovieRequest, out *DownloadMovieResponse) error {
-	return h.RmsLibraryHandler.DownloadMovie(ctx, in, out)
+func (h *rmsLibraryHandler) DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error {
+	return h.RmsLibraryHandler.DownloadMovieAuto(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error {
+	return h.RmsLibraryHandler.FindMovieTorrents(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error {
+	return h.RmsLibraryHandler.FindTorrents(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.RmsLibraryHandler.DownloadTorrent(ctx, in, out)
 }
 
 func (h *rmsLibraryHandler) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error {
 	return h.RmsLibraryHandler.GetTvSeriesUpdates(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) GetMovieInfo(ctx context.Context, in *GetMovieInfoRequest, out *MovieInfo) error {
-	return h.RmsLibraryHandler.GetMovieInfo(ctx, in, out)
-}
-
 func (h *rmsLibraryHandler) GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error {
 	return h.RmsLibraryHandler.GetMovies(ctx, in, out)
-}
-
-func (h *rmsLibraryHandler) GetMovieLayout(ctx context.Context, in *GetMovieLayoutRequest, out *GetMovieLayoutResponse) error {
-	return h.RmsLibraryHandler.GetMovieLayout(ctx, in, out)
 }

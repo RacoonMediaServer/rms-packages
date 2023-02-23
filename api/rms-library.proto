@@ -7,20 +7,23 @@ service RmsLibrary {
   // поиск информации о фильмах и сериалах во внешних источниках
   rpc SearchMovie(SearchMovieRequest) returns (SearchMovieResponse);
 
-  // скачать указанный фильм или сериал
-  rpc DownloadMovie(DownloadMovieRequest) returns (DownloadMovieResponse);
+  // скачать указанный фильм или сериал в автоматическом режиме
+  rpc DownloadMovieAuto(DownloadMovieAutoRequest) returns (DownloadMovieAutoResponse);
+
+  // найти варианты раздачи для фильма или сериала
+  rpc FindMovieTorrents(FindMovieTorrentsRequest) returns (FindTorrentsResponse);
+
+  // найти на торрентах просто какой то контент без привзяки к типу
+  rpc FindTorrents(FindTorrentsRequest) returns (FindTorrentsResponse);
+
+  // скачать выбранную раздачу
+  rpc DownloadTorrent(DownloadTorrentRequest) returns (google.protobuf.Empty);
 
   // получить список доступных новых сезонов для скачивания
   rpc GetTvSeriesUpdates(google.protobuf.Empty) returns (GetTvSeriesUpdatesResponse);
 
-  // получить информацию о фильме/сериале по его ID
-  rpc GetMovieInfo(GetMovieInfoRequest) returns (MovieInfo);
-
-  // получить список всех фильмов/сериалов
+  // получить список фильмов/сериалов и пути к их контенту
   rpc GetMovies(GetMoviesRequest) returns (GetMoviesResponse);
-
-  // получить раскладку директорий, связанную с тем как хранится контент
-  rpc GetMovieLayout(GetMovieLayoutRequest) returns (GetMovieLayoutResponse);
 }
 
 // запрос на поиск во внешних источниках
@@ -47,11 +50,6 @@ message MovieInfo {
   optional uint32 seasons = 8;
 }
 
-// запрос получения инфы о фильме/сериале по его ID
-message GetMovieInfoRequest {
-  string id = 1;
-}
-
 // результат поиска по внешних источниках
 message FoundMovie {
   // сквозной ID фильма/сериала
@@ -69,23 +67,67 @@ message SearchMovieResponse {
   repeated FoundMovie movies = 1;
 }
 
+// раздача на торренте
+message Torrent {
+  // ID для идентификации данной раздачи
+  string id = 1;
+
+  // заголовок раздачи
+  string title = 2;
+
+  // размер раздачи в мегабайтах
+  uint64 size = 3;
+
+  // кол-во раздающих
+  uint32 seeders = 4;
+}
+
 // скачать указанный фильм, или сезон сериала
-message DownloadMovieRequest {
+message DownloadMovieAutoRequest {
   // сквозной ID фильма/сериала
   string id = 1;
 
-  // скачать другую версию
-  bool otherVersion = 2;
-
   // какой сезон скачать, если не указан - скачать отсутствующие в библиотеке сезоны
-  optional uint32 season = 3;
+  optional uint32 season = 2;
 }
 
-message DownloadMovieResponse {
+message DownloadMovieAutoResponse {
   // удалось ли найти раздачи
   bool found = 1;
   // какие сезоны были поставлены на закачку
   repeated uint32 seasons = 2;
+}
+
+message FindMovieTorrentsRequest {
+  // сквозной ID фильма/сериала
+  string id = 1;
+
+  // максимальное кол-во раздач в ответе
+  uint32 limit = 2;
+
+  // возможность указать конкретный сезон
+  optional uint32 season = 3;
+}
+
+message FindTorrentsRequest {
+  // что ищем
+  string query = 1;
+
+  // сколько максимум раздач
+  uint32 limit = 2;
+
+  // строгое соответствие поисковому запросу
+  bool strong = 3;
+}
+
+message FindTorrentsResponse {
+  // найденные раздачи
+  repeated Torrent results = 1;
+}
+
+message DownloadTorrentRequest {
+  // ID раздачи
+  string torrentId = 1;
 }
 
 // инфа о новых сезонах одного сериала
@@ -119,19 +161,33 @@ message GetMoviesRequest {
   optional string genre = 2;
 }
 
+message FilmLayout {
+  string torrentID = 1;
+  repeated string files = 2;
+}
+
+message TvSeriesLayout {
+  message Season {
+    repeated string files = 1;
+  }
+  map<uint32, Season> seasons = 1;
+}
+
 message GetMoviesResponse {
-  repeated FoundMovie results = 1;
+  message Result {
+    // ID фильма или сериала
+    string id = 1;
+
+    // общая информация о Movie
+    MovieInfo info = 2;
+
+    // набор файлов фильма
+    optional FilmLayout film = 3;
+
+    // набор файлов сериала
+    optional TvSeriesLayout tvSeries = 4;
+  }
+  repeated Result result = 1;
 }
 
-message GetMovieLayoutRequest {
-  // ID фильма/сериала
-  string id = 1;
-
-  // Для сериала должны указать сезон
-  optional uint32 season = 2;
-}
-
-message GetMovieLayoutResponse {
-  // TODO: хорошо подумать над этим
-}
 
