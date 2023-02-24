@@ -51,6 +51,8 @@ type RmsLibraryService interface {
 	GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error)
 	// получить список фильмов/сериалов и пути к их контенту
 	GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error)
+	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
+	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error)
 }
 
 type rmsLibraryService struct {
@@ -135,6 +137,16 @@ func (c *rmsLibraryService) GetMovies(ctx context.Context, in *GetMoviesRequest,
 	return out, nil
 }
 
+func (c *rmsLibraryService) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovie", in)
+	out := new(GetMovieResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for RmsLibrary service
 
 type RmsLibraryHandler interface {
@@ -152,6 +164,8 @@ type RmsLibraryHandler interface {
 	GetTvSeriesUpdates(context.Context, *emptypb.Empty, *GetTvSeriesUpdatesResponse) error
 	// получить список фильмов/сериалов и пути к их контенту
 	GetMovies(context.Context, *GetMoviesRequest, *GetMoviesResponse) error
+	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
+	GetMovie(context.Context, *GetMovieRequest, *GetMovieResponse) error
 }
 
 func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...server.HandlerOption) error {
@@ -163,6 +177,7 @@ func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...
 		DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
 		GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error
 		GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
+		GetMovie(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error
 	}
 	type RmsLibrary struct {
 		rmsLibrary
@@ -201,4 +216,8 @@ func (h *rmsLibraryHandler) GetTvSeriesUpdates(ctx context.Context, in *emptypb.
 
 func (h *rmsLibraryHandler) GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error {
 	return h.RmsLibraryHandler.GetMovies(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) GetMovie(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error {
+	return h.RmsLibraryHandler.GetMovie(ctx, in, out)
 }
