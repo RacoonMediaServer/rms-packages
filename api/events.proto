@@ -13,6 +13,9 @@ message Notification {
 
     // Error raises during transcoding
     TranscodingFailed = 2;
+
+    // Torrent removed by user
+    TorrentRemoved = 3;
   }
 
   Kind kind = 1;
