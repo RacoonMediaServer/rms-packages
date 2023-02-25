@@ -27,6 +27,9 @@ service RmsLibrary {
 
   // получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
   rpc GetMovie(GetMovieRequest) returns (GetMovieResponse);
+
+  // удаление фильмов/сериалов
+  rpc DeleteMovie(DeleteMovieRequest) returns (google.protobuf.Empty);
 }
 
 // запрос на поиск во внешних источниках
@@ -195,6 +198,10 @@ message GetMovieRequest {
 
 message GetMovieResponse {
   optional Movie result = 1;
+}
+
+message DeleteMovieRequest {
+  string ID = 1;
 }
 
 
