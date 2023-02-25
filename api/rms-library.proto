@@ -152,13 +152,8 @@ message GetTvSeriesUpdatesResponse {
 
 // запрос доступных киношек в библиотеке
 message GetMoviesRequest {
-  enum AllowedTypes {
-    Films = 0;
-    TvSeries = 1;
-    Both = 2;
-  }
-  // какого типа элементы отображать
-  AllowedTypes types = 1;
+  // типы медиа которые стоит отобразить
+  optional MovieType type = 1;
 
   // поиск по жанрам
   optional string genre = 2;
