@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "events.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "../rms-notifier";
+
+service RmsNotifier {
+  // получить текущие настройки
+  rpc GetSettings(google.protobuf.Empty) returns (Settings);
+
+  // обновить настройки
+  rpc SetSettings(Settings) returns (google.protobuf.Empty);
+
+  // получить события пришедшые за период времени
+  rpc GetJournalEvents(GetEventsRequest) returns (GetEventsResponse);
+}
+
+// правило уведомления
+message Rule {
+  enum Method {
+    Email = 0;
+    SMS = 1;
+  }
+  // как уведомлять
+  Method method = 1;
+
+  // адрес получателя
+  string destination = 2;
+}
+
+// настройки сервиса
+message Settings {
+  message Rules {
+    repeated Rule rule = 1;
+  }
+
+  // включены ли вообще уведомления
+  bool enabled = 1;
+
+  // разрешены ли уведомления в телегу
+  bool telegramNotifications = 2;
+
+  // мапим топик на список правил уведомления
+  map<string, Rules> rules = 3;
+
+  // интервал фильтрации уведомлений в секундах (если их много)
+  uint32 filterInterval = 4;
+
+  // интервал ротации истории уведомлений (дни)
+  uint32 rotationInterval = 5;
+}
+
+message GetEventsRequest {
+  // от какого момента
+  optional google.protobuf.Timestamp from = 1;
+
+  // до какого момента
+  optional google.protobuf.Timestamp to = 2;
+
+  // сколько
+  uint32 limit = 3;
+}
+
+// универсальное представление события
+message Event {
+  optional events.Notification notification = 1;
+  optional events.Malfunction malfunction = 2;
+  optional events.Alert alert = 3;
+}
+
+message GetEventsResponse {
+  repeated Event events = 1;
+}
