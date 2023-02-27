@@ -20,8 +20,9 @@ service RmsNotifier {
 // правило уведомления
 message Rule {
   enum Method {
-    Email = 0;
-    SMS = 1;
+    Telegram = 0;
+    Email = 1;
+    SMS = 2;
   }
   // как уведомлять
   Method method = 1;
@@ -39,17 +40,14 @@ message Settings {
   // включены ли вообще уведомления
   bool enabled = 1;
 
-  // разрешены ли уведомления в телегу
-  bool telegramNotifications = 2;
-
   // мапим топик на список правил уведомления
-  map<string, Rules> rules = 3;
+  map<string, Rules> rules = 2;
 
   // интервал фильтрации уведомлений в секундах (если их много)
-  uint32 filterInterval = 4;
+  uint32 filterInterval = 3;
 
   // интервал ротации истории уведомлений (дни)
-  uint32 rotationInterval = 5;
+  uint32 rotationInterval = 4;
 }
 
 message GetEventsRequest {
