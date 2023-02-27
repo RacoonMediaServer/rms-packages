@@ -62,6 +62,7 @@ message Alert {
   string camera = 2;
   Kind kind = 3;
   bytes image = 4;
-  uint64 durationSec = 5; // длительность события (мб предполагаемая)
-  uint64 extraOffsetSec = 6; // сколько еще захватить секунд с обоих концов
+  string imageMimeType = 5;
+  uint64 durationSec = 6; // длительность события (мб предполагаемая)
+  uint64 extraOffsetSec = 7; // сколько еще захватить секунд с обоих концов
 }
