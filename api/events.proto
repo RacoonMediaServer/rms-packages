@@ -12,17 +12,21 @@ message Notification {
     // Something wrong with torrent
     DownloadFailed = 1;
 
+    // Transcoding of some content has done
+    TranscodingDone = 2;
+
     // Error raises during transcoding
-    TranscodingFailed = 2;
+    TranscodingFailed = 3;
 
     // Torrent removed by user
-    TorrentRemoved = 3;
+    TorrentRemoved = 4;
   }
 
   Kind kind = 1;
   optional string torrentID = 2;
   optional string mediaID = 3;
   optional string itemTitle = 4;
+  optional string videoLocation = 5;
 }
 
 // Notification about malfunctions and any problems in the entire system
