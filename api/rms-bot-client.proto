@@ -9,10 +9,14 @@ service RmsBotClient {
   rpc GetIdentificationCode(google.protobuf.Empty) returns (GetIdentificationCodeResponse);
 
   // Отправить сообщение в бот
-  rpc SendMessage(communication.BotMessage) returns (google.protobuf.Empty);
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);
 }
 
 message GetIdentificationCodeResponse {
   string code = 1;
+}
+
+message SendMessageRequest {
+  communication.BotMessage message = 1;
 }
 

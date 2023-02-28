@@ -5,7 +5,7 @@ package rms_bot_client
 
 import (
 	fmt "fmt"
-	communication "github.com/RacoonMediaServer/rms-packages/pkg/communication"
+	_ "github.com/RacoonMediaServer/rms-packages/pkg/communication"
 	proto "google.golang.org/protobuf/proto"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	math "math"
@@ -41,7 +41,7 @@ type RmsBotClientService interface {
 	// Получить код для идентификации на сервере
 	GetIdentificationCode(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetIdentificationCodeResponse, error)
 	// Отправить сообщение в бот
-	SendMessage(ctx context.Context, in *communication.BotMessage, opts ...client.CallOption) (*emptypb.Empty, error)
+	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
 
 type rmsBotClientService struct {
@@ -66,7 +66,7 @@ func (c *rmsBotClientService) GetIdentificationCode(ctx context.Context, in *emp
 	return out, nil
 }
 
-func (c *rmsBotClientService) SendMessage(ctx context.Context, in *communication.BotMessage, opts ...client.CallOption) (*emptypb.Empty, error) {
+func (c *rmsBotClientService) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
 	req := c.c.NewRequest(c.name, "RmsBotClient.SendMessage", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -82,13 +82,13 @@ type RmsBotClientHandler interface {
 	// Получить код для идентификации на сервере
 	GetIdentificationCode(context.Context, *emptypb.Empty, *GetIdentificationCodeResponse) error
 	// Отправить сообщение в бот
-	SendMessage(context.Context, *communication.BotMessage, *emptypb.Empty) error
+	SendMessage(context.Context, *SendMessageRequest, *emptypb.Empty) error
 }
 
 func RegisterRmsBotClientHandler(s server.Server, hdlr RmsBotClientHandler, opts ...server.HandlerOption) error {
 	type rmsBotClient interface {
 		GetIdentificationCode(ctx context.Context, in *emptypb.Empty, out *GetIdentificationCodeResponse) error
-		SendMessage(ctx context.Context, in *communication.BotMessage, out *emptypb.Empty) error
+		SendMessage(ctx context.Context, in *SendMessageRequest, out *emptypb.Empty) error
 	}
 	type RmsBotClient struct {
 		rmsBotClient
@@ -105,6 +105,6 @@ func (h *rmsBotClientHandler) GetIdentificationCode(ctx context.Context, in *emp
 	return h.RmsBotClientHandler.GetIdentificationCode(ctx, in, out)
 }
 
-func (h *rmsBotClientHandler) SendMessage(ctx context.Context, in *communication.BotMessage, out *emptypb.Empty) error {
+func (h *rmsBotClientHandler) SendMessage(ctx context.Context, in *SendMessageRequest, out *emptypb.Empty) error {
 	return h.RmsBotClientHandler.SendMessage(ctx, in, out)
 }
