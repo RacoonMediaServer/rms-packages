@@ -95,6 +95,9 @@ message DownloadMovieAutoRequest {
 
   // какой сезон скачать, если не указан - скачать отсутствующие в библиотеке сезоны
   optional uint32 season = 2;
+
+  // флаг для более быстрого скачивания
+  bool faster = 3;
 }
 
 message DownloadMovieAutoResponse {
