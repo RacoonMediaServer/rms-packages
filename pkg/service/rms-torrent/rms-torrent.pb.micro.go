@@ -43,6 +43,9 @@ type RmsTorrentService interface {
 	GetTorrents(ctx context.Context, in *GetTorrentsRequest, opts ...client.CallOption) (*GetTorrentsResponse, error)
 	RemoveTorrent(ctx context.Context, in *RemoveTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	UpPriority(ctx context.Context, in *UpPriorityRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// Настройки
+	GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*Settings, error)
+	SetSettings(ctx context.Context, in *Settings, opts ...client.CallOption) (*emptypb.Empty, error)
 }
 
 type rmsTorrentService struct {
@@ -107,6 +110,26 @@ func (c *rmsTorrentService) UpPriority(ctx context.Context, in *UpPriorityReques
 	return out, nil
 }
 
+func (c *rmsTorrentService) GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*Settings, error) {
+	req := c.c.NewRequest(c.name, "RmsTorrent.GetSettings", in)
+	out := new(Settings)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsTorrentService) SetSettings(ctx context.Context, in *Settings, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsTorrent.SetSettings", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for RmsTorrent service
 
 type RmsTorrentHandler interface {
@@ -116,6 +139,9 @@ type RmsTorrentHandler interface {
 	GetTorrents(context.Context, *GetTorrentsRequest, *GetTorrentsResponse) error
 	RemoveTorrent(context.Context, *RemoveTorrentRequest, *emptypb.Empty) error
 	UpPriority(context.Context, *UpPriorityRequest, *emptypb.Empty) error
+	// Настройки
+	GetSettings(context.Context, *emptypb.Empty, *Settings) error
+	SetSettings(context.Context, *Settings, *emptypb.Empty) error
 }
 
 func RegisterRmsTorrentHandler(s server.Server, hdlr RmsTorrentHandler, opts ...server.HandlerOption) error {
@@ -125,6 +151,8 @@ func RegisterRmsTorrentHandler(s server.Server, hdlr RmsTorrentHandler, opts ...
 		GetTorrents(ctx context.Context, in *GetTorrentsRequest, out *GetTorrentsResponse) error
 		RemoveTorrent(ctx context.Context, in *RemoveTorrentRequest, out *emptypb.Empty) error
 		UpPriority(ctx context.Context, in *UpPriorityRequest, out *emptypb.Empty) error
+		GetSettings(ctx context.Context, in *emptypb.Empty, out *Settings) error
+		SetSettings(ctx context.Context, in *Settings, out *emptypb.Empty) error
 	}
 	type RmsTorrent struct {
 		rmsTorrent
@@ -155,4 +183,12 @@ func (h *rmsTorrentHandler) RemoveTorrent(ctx context.Context, in *RemoveTorrent
 
 func (h *rmsTorrentHandler) UpPriority(ctx context.Context, in *UpPriorityRequest, out *emptypb.Empty) error {
 	return h.RmsTorrentHandler.UpPriority(ctx, in, out)
+}
+
+func (h *rmsTorrentHandler) GetSettings(ctx context.Context, in *emptypb.Empty, out *Settings) error {
+	return h.RmsTorrentHandler.GetSettings(ctx, in, out)
+}
+
+func (h *rmsTorrentHandler) SetSettings(ctx context.Context, in *Settings, out *emptypb.Empty) error {
+	return h.RmsTorrentHandler.SetSettings(ctx, in, out)
 }

@@ -11,6 +11,10 @@ service RmsTorrent {
   rpc GetTorrents(GetTorrentsRequest) returns (GetTorrentsResponse);
   rpc RemoveTorrent(RemoveTorrentRequest) returns (google.protobuf.Empty);
   rpc UpPriority(UpPriorityRequest) returns (google.protobuf.Empty);
+
+  // Настройки
+  rpc GetSettings(google.protobuf.Empty) returns (Settings);
+  rpc SetSettings(Settings) returns (google.protobuf.Empty);
 }
 
 message DownloadRequest {
@@ -49,3 +53,8 @@ message GetTorrentsRequest {bool includeDoneTorrents = 1;}
 message GetTorrentsResponse {repeated TorrentInfo torrents = 1;}
 message RemoveTorrentRequest {string id = 1;}
 message UpPriorityRequest{string id = 1;}
+
+message Settings {
+  uint64 DownloadLimit = 1;
+  uint64 UploadLimit = 2;
+}
