@@ -18,6 +18,8 @@ message DownloadRequest {
   bytes what = 1;
   // Текстовое описание контента (нужно для отправки события)
   string description = 2;
+  // Флажок для игноирования ограничений на скорость скачивания
+  bool faster = 3;
 }
 
 message DownloadResponse {
@@ -41,6 +43,7 @@ message TorrentInfo {
   Status status = 3;
   float progress = 4;
   int64 estimate = 5;
+  uint64 sizeMB = 6;
 }
 message GetTorrentsRequest {bool includeDoneTorrents = 1;}
 message GetTorrentsResponse {repeated TorrentInfo torrents = 1;}
