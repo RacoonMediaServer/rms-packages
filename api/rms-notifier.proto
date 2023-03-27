@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
-import "events.proto";
 import "communication.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -14,11 +13,8 @@ service RmsNotifier {
   // обновить настройки
   rpc SetSettings(NotifierSettings) returns (google.protobuf.Empty);
 
-  // получить события пришедшые за период времени
-  rpc GetJournalEvents(GetJournalEventsRequest) returns (GetJournalEventsResponse);
-
   // получить события пришедшые за период времени в виде контента
-  rpc GetJournal(GetJournalEventsRequest) returns (GetJournalResponse);
+  rpc GetJournal(GetJournalRequest) returns (GetJournalResponse);
 }
 
 // правило уведомления
@@ -54,7 +50,7 @@ message NotifierSettings {
   uint32 rotationInterval = 4;
 }
 
-message GetJournalEventsRequest {
+message GetJournalRequest {
   // от какого момента
   optional google.protobuf.Timestamp from = 1;
 
@@ -63,17 +59,6 @@ message GetJournalEventsRequest {
 
   // сколько
   uint32 limit = 3;
-}
-
-// универсальное представление события
-message Event {
-  optional events.Notification notification = 1;
-  optional events.Malfunction malfunction = 2;
-  optional events.Alert alert = 3;
-}
-
-message GetJournalEventsResponse {
-  repeated Event events = 1;
 }
 
 message GetJournalResponse {

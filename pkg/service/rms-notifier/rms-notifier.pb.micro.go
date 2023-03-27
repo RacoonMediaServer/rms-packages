@@ -6,7 +6,6 @@ package rms_notifier
 import (
 	fmt "fmt"
 	_ "github.com/RacoonMediaServer/rms-packages/pkg/communication"
-	_ "github.com/RacoonMediaServer/rms-packages/pkg/events"
 	proto "google.golang.org/protobuf/proto"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
@@ -44,10 +43,8 @@ type RmsNotifierService interface {
 	GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*NotifierSettings, error)
 	// обновить настройки
 	SetSettings(ctx context.Context, in *NotifierSettings, opts ...client.CallOption) (*emptypb.Empty, error)
-	// получить события пришедшые за период времени
-	GetJournalEvents(ctx context.Context, in *GetJournalEventsRequest, opts ...client.CallOption) (*GetJournalEventsResponse, error)
 	// получить события пришедшые за период времени в виде контента
-	GetJournal(ctx context.Context, in *GetJournalEventsRequest, opts ...client.CallOption) (*GetJournalResponse, error)
+	GetJournal(ctx context.Context, in *GetJournalRequest, opts ...client.CallOption) (*GetJournalResponse, error)
 }
 
 type rmsNotifierService struct {
@@ -82,17 +79,7 @@ func (c *rmsNotifierService) SetSettings(ctx context.Context, in *NotifierSettin
 	return out, nil
 }
 
-func (c *rmsNotifierService) GetJournalEvents(ctx context.Context, in *GetJournalEventsRequest, opts ...client.CallOption) (*GetJournalEventsResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsNotifier.GetJournalEvents", in)
-	out := new(GetJournalEventsResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsNotifierService) GetJournal(ctx context.Context, in *GetJournalEventsRequest, opts ...client.CallOption) (*GetJournalResponse, error) {
+func (c *rmsNotifierService) GetJournal(ctx context.Context, in *GetJournalRequest, opts ...client.CallOption) (*GetJournalResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsNotifier.GetJournal", in)
 	out := new(GetJournalResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -109,18 +96,15 @@ type RmsNotifierHandler interface {
 	GetSettings(context.Context, *emptypb.Empty, *NotifierSettings) error
 	// обновить настройки
 	SetSettings(context.Context, *NotifierSettings, *emptypb.Empty) error
-	// получить события пришедшые за период времени
-	GetJournalEvents(context.Context, *GetJournalEventsRequest, *GetJournalEventsResponse) error
 	// получить события пришедшые за период времени в виде контента
-	GetJournal(context.Context, *GetJournalEventsRequest, *GetJournalResponse) error
+	GetJournal(context.Context, *GetJournalRequest, *GetJournalResponse) error
 }
 
 func RegisterRmsNotifierHandler(s server.Server, hdlr RmsNotifierHandler, opts ...server.HandlerOption) error {
 	type rmsNotifier interface {
 		GetSettings(ctx context.Context, in *emptypb.Empty, out *NotifierSettings) error
 		SetSettings(ctx context.Context, in *NotifierSettings, out *emptypb.Empty) error
-		GetJournalEvents(ctx context.Context, in *GetJournalEventsRequest, out *GetJournalEventsResponse) error
-		GetJournal(ctx context.Context, in *GetJournalEventsRequest, out *GetJournalResponse) error
+		GetJournal(ctx context.Context, in *GetJournalRequest, out *GetJournalResponse) error
 	}
 	type RmsNotifier struct {
 		rmsNotifier
@@ -141,10 +125,6 @@ func (h *rmsNotifierHandler) SetSettings(ctx context.Context, in *NotifierSettin
 	return h.RmsNotifierHandler.SetSettings(ctx, in, out)
 }
 
-func (h *rmsNotifierHandler) GetJournalEvents(ctx context.Context, in *GetJournalEventsRequest, out *GetJournalEventsResponse) error {
-	return h.RmsNotifierHandler.GetJournalEvents(ctx, in, out)
-}
-
-func (h *rmsNotifierHandler) GetJournal(ctx context.Context, in *GetJournalEventsRequest, out *GetJournalResponse) error {
+func (h *rmsNotifierHandler) GetJournal(ctx context.Context, in *GetJournalRequest, out *GetJournalResponse) error {
 	return h.RmsNotifierHandler.GetJournal(ctx, in, out)
 }
