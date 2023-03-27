@@ -2,7 +2,6 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 import "events.proto";
-import "google/protobuf/timestamp.proto";
 
 option go_package = "../rms-notifier";
 
@@ -52,10 +51,10 @@ message NotifierSettings {
 
 message GetJournalRequest {
   // от какого момента
-  optional google.protobuf.Timestamp from = 1;
+  optional int64 from = 1;
 
   // до какого момента
-  optional google.protobuf.Timestamp to = 2;
+  optional int64 to = 2;
 
   // сколько
   uint32 limit = 3;
@@ -66,7 +65,7 @@ message Event {
   optional events.Malfunction malfunction = 2;
   optional events.Alert alert = 3;
   string sender = 4;
-  google.protobuf.Timestamp timestamp = 5;
+  int64 timestamp = 5;
 }
 
 message GetJournalResponse {
