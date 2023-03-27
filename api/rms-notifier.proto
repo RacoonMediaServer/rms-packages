@@ -2,19 +2,23 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 import "events.proto";
+import "communication.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "../rms-notifier";
 
 service RmsNotifier {
   // получить текущие настройки
-  rpc GetSettings(google.protobuf.Empty) returns (Settings);
+  rpc GetSettings(google.protobuf.Empty) returns (NotifierSettings);
 
   // обновить настройки
-  rpc SetSettings(Settings) returns (google.protobuf.Empty);
+  rpc SetSettings(NotifierSettings) returns (google.protobuf.Empty);
 
   // получить события пришедшые за период времени
-  rpc GetJournalEvents(GetEventsRequest) returns (GetEventsResponse);
+  rpc GetJournalEvents(GetJournalEventsRequest) returns (GetJournalEventsResponse);
+
+  // получить события пришедшые за период времени в виде контента
+  rpc GetJournal(GetJournalEventsRequest) returns (GetJournalResponse);
 }
 
 // правило уведомления
@@ -32,7 +36,7 @@ message Rule {
 }
 
 // настройки сервиса
-message Settings {
+message NotifierSettings {
   message Rules {
     repeated Rule rule = 1;
   }
@@ -50,7 +54,7 @@ message Settings {
   uint32 rotationInterval = 4;
 }
 
-message GetEventsRequest {
+message GetJournalEventsRequest {
   // от какого момента
   optional google.protobuf.Timestamp from = 1;
 
@@ -68,6 +72,23 @@ message Event {
   optional events.Alert alert = 3;
 }
 
-message GetEventsResponse {
+message GetJournalEventsResponse {
   repeated Event events = 1;
+}
+
+message GetJournalResponse {
+  message Item {
+    enum Severity {
+      Debug = 0;
+      Info = 1;
+      Warning = 2;
+      Fault = 3;
+    }
+    Severity severity = 1;
+    string subject = 2;
+    string bodyHtml = 3;
+    string bodyText = 4;
+    optional communication.Attachment attachment = 5;
+  }
+  repeated Item events = 1;
 }
