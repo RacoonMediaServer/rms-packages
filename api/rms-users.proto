@@ -16,6 +16,9 @@ enum Permissions {
 
   // управление аккаунтами внешних систем
   AccountManagement = 2;
+
+  // отправка уведомлений
+  SendNotifications = 3;
 }
 
 message GetPermissionsRequest {
