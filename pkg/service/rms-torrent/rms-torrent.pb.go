@@ -248,12 +248,18 @@ type TorrentInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title    string  `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Status   Status  `protobuf:"varint,3,opt,name=status,proto3,enum=Status" json:"status,omitempty"`
+	// Идентификатор загрузки
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Название раздачи
+	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	// Состояние
+	Status Status `protobuf:"varint,3,opt,name=status,proto3,enum=Status" json:"status,omitempty"`
+	// Сколько % данных загружено
 	Progress float32 `protobuf:"fixed32,4,opt,name=progress,proto3" json:"progress,omitempty"`
-	Estimate int64   `protobuf:"varint,5,opt,name=estimate,proto3" json:"estimate,omitempty"`
-	SizeMB   uint64  `protobuf:"varint,6,opt,name=sizeMB,proto3" json:"sizeMB,omitempty"`
+	// Сколько осталось времени до заверщения (time.Duration)
+	Estimate int64 `protobuf:"varint,5,opt,name=estimate,proto3" json:"estimate,omitempty"`
+	// Сколько Мб необходимо загрузить
+	SizeMB uint64 `protobuf:"varint,6,opt,name=sizeMB,proto3" json:"sizeMB,omitempty"`
 }
 
 func (x *TorrentInfo) Reset() {

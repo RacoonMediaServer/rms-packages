@@ -42,11 +42,22 @@ enum Status {
 }
 
 message TorrentInfo {
+  // Идентификатор загрузки
   string id = 1;
+
+  // Название раздачи
   string title = 2;
+
+  // Состояние
   Status status = 3;
+
+  // Сколько % данных загружено
   float progress = 4;
+
+  // Сколько осталось времени до заверщения (time.Duration)
   int64 estimate = 5;
+
+  // Сколько Мб необходимо загрузить
   uint64 sizeMB = 6;
 }
 message GetTorrentsRequest {bool includeDoneTorrents = 1;}
