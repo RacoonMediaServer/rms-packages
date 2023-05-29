@@ -41,6 +41,8 @@ message Malfunction {
     Unknown = 0;
     CannotAccess = 1;
     NotEnoughSpace = 2;
+    TaskIsHung = 3;
+    ActionFailed = 4;
   }
   int64 timestamp = 1;
   string error = 2;
