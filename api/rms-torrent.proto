@@ -55,7 +55,7 @@ message TorrentInfo {
   float progress = 4;
 
   // Сколько осталось времени до заверщения (time.Duration)
-  int64 estimate = 5;
+  int64 remainingTime = 5;
 
   // Сколько Мб необходимо загрузить
   uint64 sizeMB = 6;
