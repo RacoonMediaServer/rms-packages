@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-notes";
+
+service RmsNotes {
+  // Добавить заметку
+  rpc AddNote(AddNoteRequest) returns (google.protobuf.Empty);
+
+  // Добавить задачу
+  rpc AddTask(AddTaskRequest) returns (google.protobuf.Empty);
+
+  // Отложить задачу
+  rpc SnoozeTask(SnoozeTaskRequest) returns (google.protobuf.Empty);
+
+  // Закрыть задачу
+  rpc DoneTask(DoneTaskRequest) returns (google.protobuf.Empty);
+
+  // Получить настройки
+  rpc GetSettings(google.protobuf.Empty) returns (NotesSettings);
+
+  // Установить настройки
+  rpc SetSettings(NotesSettings) returns (google.protobuf.Empty);
+}
+
+message AddNoteRequest {
+  // Заголовок заметки
+  string title = 1;
+  // Текст заметки
+  string text = 2;
+}
+
+message AddTaskRequest {
+  // Текст задачи
+  string text = 1;
+  // Дата задачи в формате yyyy-mm-dd
+  optional string dueDate = 2;
+}
+
+message SnoozeTaskRequest {
+  // ID задачи
+  string id = 1;
+
+  // Дата задачи в формате yyyy-mm-dd
+  optional string dueDate = 2;
+}
+
+message DoneTaskRequest {
+  // ID задачи
+  string id = 1;
+}
+
+message NotesSettings {
+  // Путь к директории Obsidian
+  string directory = 1;
+
+  // Директория, в которую добавлять новые заметки
+  string notesDirectory = 2;
+
+  // Файл, в который добавляются задачи
+  string tasksFile = 3;
+}
