@@ -60,4 +60,7 @@ message NotesSettings {
 
   // Файл, в который добавляются задачи
   string tasksFile = 3;
+
+  // Время, в которое происходит уведомление (час, от 0 до 24)
+  uint32 notificationTime = 4;
 }
