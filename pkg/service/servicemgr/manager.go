@@ -3,6 +3,7 @@ package servicemgr
 import (
 	rms_bot_client "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-client"
 	rms_bot_server "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-server"
+	rms_cctv "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-cctv"
 	rms_library "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-library"
 	rms_notes "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-notes"
 	rms_notifier "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-notifier"
@@ -18,6 +19,7 @@ import (
 //go:generate ../rms-bot-client/gen.sh
 //go:generate ../rms-notifier/gen.sh
 //go:generate ../rms-notes/gen.sh
+//go:generate ../rms-cctv/gen.sh
 
 // ClientFactory can spawn microservices clients
 type ClientFactory interface {
@@ -67,4 +69,9 @@ func (f ServiceFactory) NewNotifier() rms_notifier.RmsNotifierService {
 // NewNotes creates connection to rms-notes service
 func (f ServiceFactory) NewNotes() rms_notes.RmsNotesService {
 	return rms_notes.NewRmsNotesService("rms-notes", f.constructor.Client())
+}
+
+// NewCctv creates connection to rms-cctv service
+func (f ServiceFactory) NewCctv() rms_cctv.RmsCctvService {
+	return rms_cctv.NewRmsCctvService("rms-cctv", f.constructor.Client())
 }
