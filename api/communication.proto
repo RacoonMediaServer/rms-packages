@@ -3,8 +3,6 @@ package communication;
 
 option go_package = "github.com/RacoonMediaServer/rms-packages/pkg/communication";
 
-import "google/protobuf/timestamp.proto";
-
 // Type of Message
 enum MessageType {
   // Usual communicating messages between user and device
@@ -21,7 +19,6 @@ enum MessageType {
 message UserMessage {
   MessageType type = 1;
   string text = 2;
-  google.protobuf.Timestamp timestamp = 3;
   int32 user = 4;
 }
 
@@ -53,7 +50,6 @@ message Attachment {
 message BotMessage {
   MessageType type = 1;
   string text = 2;
-  google.protobuf.Timestamp timestamp = 3;
   repeated Button buttons = 4;
   KeyboardStyle keyboardStyle = 5;
   optional Attachment attachment = 6;
