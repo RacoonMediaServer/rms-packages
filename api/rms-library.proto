@@ -189,6 +189,9 @@ message Movie {
 
   // набор файлов сериала
   optional TvSeriesLayout tvSeries = 4;
+
+  // Занимаемый на диске размер (МБ)
+  uint64 size = 5;
 }
 
 message GetMoviesResponse {
