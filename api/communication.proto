@@ -13,6 +13,9 @@ enum MessageType {
 
   // Message sends by server for provide linkage code
   LinkageCode = 2;
+
+  // Отсоединить пользователя от текущего устройства
+  UnlinkUser = 3;
 }
 
 // Telegram message from user to device
