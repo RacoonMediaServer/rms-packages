@@ -24,6 +24,7 @@ import (
 // ClientFactory can spawn microservices clients
 type ClientFactory interface {
 	Client() client.Client
+	Name() string
 }
 
 // ServiceFactory can spawn connections to all RMS microservices
