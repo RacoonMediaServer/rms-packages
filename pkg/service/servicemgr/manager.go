@@ -1,6 +1,7 @@
 package servicemgr
 
 import (
+	rms_backup "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-backup"
 	rms_bot_client "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-client"
 	rms_bot_server "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-server"
 	rms_cctv "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-cctv"
@@ -20,6 +21,7 @@ import (
 //go:generate ../rms-notifier/gen.sh
 //go:generate ../rms-notes/gen.sh
 //go:generate ../rms-cctv/gen.sh
+//go:generate ../rms-backup/gen.sh
 
 // ClientFactory can spawn microservices clients
 type ClientFactory interface {
@@ -75,4 +77,9 @@ func (f ServiceFactory) NewNotes() rms_notes.RmsNotesService {
 // NewCctv creates connection to rms-cctv service
 func (f ServiceFactory) NewCctv() rms_cctv.RmsCctvService {
 	return rms_cctv.NewRmsCctvService("rms-cctv", f.constructor.Client())
+}
+
+// NewBackup creates connection to rms-backup service
+func (f ServiceFactory) NewBackup() rms_backup.RmsBackupService {
+	return rms_backup.NewRmsBackupService("rms-backup", f.constructor.Client())
 }

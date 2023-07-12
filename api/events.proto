@@ -20,6 +20,9 @@ message Notification {
 
     // Torrent removed by user
     TorrentRemoved = 4;
+
+    // Backup operation complete
+    BackupComplete = 5;
   }
 
   string sender = 6;
@@ -28,6 +31,7 @@ message Notification {
   optional string mediaID = 3;
   optional string itemTitle = 4;
   optional string videoLocation = 5;
+  optional uint32 sizeMB = 7;
 }
 
 // Notification about malfunctions and any problems in the entire system

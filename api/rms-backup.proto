@@ -1,0 +1,104 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-backup";
+
+service RmsBackup {
+  // Запустить бекап вручную
+  rpc LaunchBackup(LaunchBackupRequest) returns (LaunchBackupResponse);
+
+  // Получить статус процедуры создания бекапа
+  rpc GetBackupStatus(google.protobuf.Empty) returns (GetBackupStatusResponse);
+
+  // Получить список существующих бекапов
+  rpc GetBackups(google.protobuf.Empty) returns (GetBackupsResponse);
+
+  // Удаление бекапа
+  rpc RemoveBackup(RemoveBackupRequest) returns (google.protobuf.Empty);
+
+  // Получить настройки резервного копирования
+  rpc GetBackupSettings(google.protobuf.Empty) returns (BackupSettings);
+
+  // Установить настройки резеврного копирования
+  rpc SetBackupSettings(BackupSettings) returns (google.protobuf.Empty);
+}
+
+enum BackupType {
+  Full = 0;
+  Partial = 1;
+}
+
+message LaunchBackupRequest {
+  // Тип бекапа
+  BackupType type = 1;
+}
+
+message GetBackupStatusResponse {
+  enum Status {
+    NotStarted = 0;
+    InProgress = 1;
+    Ready = 2;
+  }
+  // Состояние операции
+  Status status = 1;
+
+  // Прогресс операции
+  float progress = 2;
+
+  // Последнее время запуска бекапа
+  uint64 lastTime = 3;
+}
+
+message LaunchBackupResponse {
+  // Запущено ли уже создание бекапа
+  bool alreadyLaunch = 1;
+}
+
+message BackupInfo {
+  // Имя файла бекапа для выгрузки
+  string fileName = 1;
+
+  // Дата создания бекапа
+  uint64 date = 2;
+
+  // Тип бекапа
+  BackupType type = 3;
+
+  // Размер бекапа в байтах
+  uint64 size = 4;
+}
+
+message GetBackupsResponse {
+  repeated BackupInfo backups = 1;
+}
+
+message RemoveBackupRequest {
+  // Имя файла бекапа
+  string fileName = 1;
+}
+
+message BackupSettings {
+  enum Period {
+    EveryDay = 0;
+    EveryWeek = 1;
+    EveryMonth = 2;
+  }
+
+  // Включено ли резервное копирование
+  bool enabled = 1;
+
+  // Тип резервной копии
+  BackupType type = 2;
+
+  // Периодичность создания копии
+  Period period = 3;
+
+  // В какой день недели/месяца делать резервное копирование
+  uint32 day = 4;
+
+  // В какое время делать бекап
+  uint32 hour = 5;
+
+  // Пароль для шифрования резервной копии
+  optional string password = 6;
+}
