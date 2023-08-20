@@ -75,3 +75,14 @@ message Alert {
   uint64 durationSec = 6; // длительность события (мб предполагаемая)
   uint64 extraOffsetSec = 7; // сколько еще захватить секунд с обоих концов
 }
+
+// Security incidents
+message Incident {
+  message Image {
+    bytes image = 1;
+    string mimeType = 2;
+  }
+  string sender = 1;
+  string text = 2;
+  repeated Image images = 3;
+}

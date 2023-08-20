@@ -14,6 +14,7 @@ type publisher struct {
 	notificationPub micro.Event
 	malfunctionPub  micro.Event
 	alertPub        micro.Event
+	incidentPub     micro.Event
 }
 
 // NewPublisher creates entity to events publishing
@@ -23,6 +24,7 @@ func NewPublisher(s servicemgr.ClientFactory) micro.Event {
 		notificationPub: micro.NewEvent(NotificationTopic, s.Client()),
 		malfunctionPub:  micro.NewEvent(MalfunctionTopic, s.Client()),
 		alertPub:        micro.NewEvent(AlertTopic, s.Client()),
+		incidentPub:     micro.NewEvent(IncidentTopic, s.Client()),
 	}
 }
 
@@ -37,6 +39,9 @@ func (p *publisher) Publish(ctx context.Context, msg interface{}, opts ...client
 	case *events.Alert:
 		e.Sender = p.sender
 		return p.alertPub.Publish(ctx, msg, opts...)
+	case *events.Incident:
+		e.Sender = p.sender
+		return p.incidentPub.Publish(ctx, msg, opts...)
 	default:
 		return fmt.Errorf("unknown event type: %T", msg)
 	}
