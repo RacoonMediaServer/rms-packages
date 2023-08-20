@@ -6,6 +6,12 @@ import "google/protobuf/timestamp.proto";
 option go_package = "../rms-cctv";
 
 service RmsCctv {
+  // получить настройки сервиса
+  rpc GetSettings(google.protobuf.Empty) returns (CctvSettings);
+
+  // установить настройки сервиса
+  rpc SetSettings(CctvSettings) returns (google.protobuf.Empty);
+
   // получить список камер
   rpc GetCameras(google.protobuf.Empty) returns(GetCamerasResponse);
 
@@ -26,6 +32,11 @@ service RmsCctv {
 
   // Получить изображение с камеры
   rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
+}
+
+message CctvSettings {
+  uint32 EventNotifyThresholdIntervalSec = 1;
+  uint32 OneEventDefaultDurationSec = 2;
 }
 
 // Режим записи камеры в архив

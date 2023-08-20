@@ -38,6 +38,10 @@ func NewRmsCctvEndpoints() []*api.Endpoint {
 // Client API for RmsCctv service
 
 type RmsCctvService interface {
+	// получить настройки сервиса
+	GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*CctvSettings, error)
+	// установить настройки сервиса
+	SetSettings(ctx context.Context, in *CctvSettings, opts ...client.CallOption) (*emptypb.Empty, error)
 	// получить список камер
 	GetCameras(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetCamerasResponse, error)
 	// Добавить камеру
@@ -64,6 +68,26 @@ func NewRmsCctvService(name string, c client.Client) RmsCctvService {
 		c:    c,
 		name: name,
 	}
+}
+
+func (c *rmsCctvService) GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*CctvSettings, error) {
+	req := c.c.NewRequest(c.name, "RmsCctv.GetSettings", in)
+	out := new(CctvSettings)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsCctvService) SetSettings(ctx context.Context, in *CctvSettings, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsCctv.SetSettings", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *rmsCctvService) GetCameras(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetCamerasResponse, error) {
@@ -139,6 +163,10 @@ func (c *rmsCctvService) GetSnapshot(ctx context.Context, in *GetSnapshotRequest
 // Server API for RmsCctv service
 
 type RmsCctvHandler interface {
+	// получить настройки сервиса
+	GetSettings(context.Context, *emptypb.Empty, *CctvSettings) error
+	// установить настройки сервиса
+	SetSettings(context.Context, *CctvSettings, *emptypb.Empty) error
 	// получить список камер
 	GetCameras(context.Context, *emptypb.Empty, *GetCamerasResponse) error
 	// Добавить камеру
@@ -157,6 +185,8 @@ type RmsCctvHandler interface {
 
 func RegisterRmsCctvHandler(s server.Server, hdlr RmsCctvHandler, opts ...server.HandlerOption) error {
 	type rmsCctv interface {
+		GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error
+		SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error
 		GetCameras(ctx context.Context, in *emptypb.Empty, out *GetCamerasResponse) error
 		AddCamera(ctx context.Context, in *Camera, out *AddCameraResponse) error
 		ModifyCamera(ctx context.Context, in *Camera, out *emptypb.Empty) error
@@ -174,6 +204,14 @@ func RegisterRmsCctvHandler(s server.Server, hdlr RmsCctvHandler, opts ...server
 
 type rmsCctvHandler struct {
 	RmsCctvHandler
+}
+
+func (h *rmsCctvHandler) GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error {
+	return h.RmsCctvHandler.GetSettings(ctx, in, out)
+}
+
+func (h *rmsCctvHandler) SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error {
+	return h.RmsCctvHandler.SetSettings(ctx, in, out)
 }
 
 func (h *rmsCctvHandler) GetCameras(ctx context.Context, in *emptypb.Empty, out *GetCamerasResponse) error {
