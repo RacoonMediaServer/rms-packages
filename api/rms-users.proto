@@ -5,6 +5,12 @@ option go_package = "../rms-users";
 service RmsUsers {
   // Получить права доступа с указанным API-токеном
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+
+  // Регистрация нового пользователя
+  rpc RegisterUser(User) returns (RegisterUserResponse);
+
+  // Получить аккаунт пользователя по его идентификатору в Telegram
+  rpc GetUserByTelegramId(GetUserByTelegramIdRequest) returns (User);
 }
 
 enum Permissions {
@@ -19,6 +25,23 @@ enum Permissions {
 
   // отправка уведомлений
   SendNotifications = 3;
+
+  // прослушивание музыки через rms-music-bot
+  ListeningMusic = 4;
+}
+
+message User {
+  // имя пользователя
+  string name = 1;
+
+  // API-токен, связанный с данным пользователем
+  optional string token = 2;
+
+  // ID пользователя Telegram
+  optional int32 telegramUserID = 3;
+
+  // права пользователя в системе
+  repeated Permissions perms = 4;
 }
 
 message GetPermissionsRequest {
@@ -28,5 +51,13 @@ message GetPermissionsRequest {
 
 message GetPermissionsResponse {
   repeated Permissions perms = 1;
+}
+
+message RegisterUserResponse {
+  string token = 1;
+}
+
+message GetUserByTelegramIdRequest {
+  int32 telegramUserId = 1;
 }
 

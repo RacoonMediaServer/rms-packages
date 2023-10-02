@@ -38,6 +38,10 @@ func NewRmsUsersEndpoints() []*api.Endpoint {
 type RmsUsersService interface {
 	// Получить права доступа с указанным API-токеном
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...client.CallOption) (*GetPermissionsResponse, error)
+	// Регистрация нового пользователя
+	RegisterUser(ctx context.Context, in *User, opts ...client.CallOption) (*RegisterUserResponse, error)
+	// Получить аккаунт пользователя по его идентификатору в Telegram
+	GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, opts ...client.CallOption) (*User, error)
 }
 
 type rmsUsersService struct {
@@ -62,16 +66,42 @@ func (c *rmsUsersService) GetPermissions(ctx context.Context, in *GetPermissions
 	return out, nil
 }
 
+func (c *rmsUsersService) RegisterUser(ctx context.Context, in *User, opts ...client.CallOption) (*RegisterUserResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsUsers.RegisterUser", in)
+	out := new(RegisterUserResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsUsersService) GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, opts ...client.CallOption) (*User, error) {
+	req := c.c.NewRequest(c.name, "RmsUsers.GetUserByTelegramId", in)
+	out := new(User)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for RmsUsers service
 
 type RmsUsersHandler interface {
 	// Получить права доступа с указанным API-токеном
 	GetPermissions(context.Context, *GetPermissionsRequest, *GetPermissionsResponse) error
+	// Регистрация нового пользователя
+	RegisterUser(context.Context, *User, *RegisterUserResponse) error
+	// Получить аккаунт пользователя по его идентификатору в Telegram
+	GetUserByTelegramId(context.Context, *GetUserByTelegramIdRequest, *User) error
 }
 
 func RegisterRmsUsersHandler(s server.Server, hdlr RmsUsersHandler, opts ...server.HandlerOption) error {
 	type rmsUsers interface {
 		GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error
+		RegisterUser(ctx context.Context, in *User, out *RegisterUserResponse) error
+		GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, out *User) error
 	}
 	type RmsUsers struct {
 		rmsUsers
@@ -86,4 +116,12 @@ type rmsUsersHandler struct {
 
 func (h *rmsUsersHandler) GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error {
 	return h.RmsUsersHandler.GetPermissions(ctx, in, out)
+}
+
+func (h *rmsUsersHandler) RegisterUser(ctx context.Context, in *User, out *RegisterUserResponse) error {
+	return h.RmsUsersHandler.RegisterUser(ctx, in, out)
+}
+
+func (h *rmsUsersHandler) GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, out *User) error {
+	return h.RmsUsersHandler.GetUserByTelegramId(ctx, in, out)
 }
