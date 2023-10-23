@@ -6,6 +6,7 @@ package rms_users
 import (
 	fmt "fmt"
 	proto "google.golang.org/protobuf/proto"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	math "math"
 )
 
@@ -42,6 +43,8 @@ type RmsUsersService interface {
 	RegisterUser(ctx context.Context, in *User, opts ...client.CallOption) (*RegisterUserResponse, error)
 	// Получить аккаунт пользователя по его идентификатору в Telegram
 	GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, opts ...client.CallOption) (*User, error)
+	// Получить список пользователей с правами администратора
+	GetAdminUsers(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetAdminUsersResponse, error)
 }
 
 type rmsUsersService struct {
@@ -86,6 +89,16 @@ func (c *rmsUsersService) GetUserByTelegramId(ctx context.Context, in *GetUserBy
 	return out, nil
 }
 
+func (c *rmsUsersService) GetAdminUsers(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetAdminUsersResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsUsers.GetAdminUsers", in)
+	out := new(GetAdminUsersResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for RmsUsers service
 
 type RmsUsersHandler interface {
@@ -95,6 +108,8 @@ type RmsUsersHandler interface {
 	RegisterUser(context.Context, *User, *RegisterUserResponse) error
 	// Получить аккаунт пользователя по его идентификатору в Telegram
 	GetUserByTelegramId(context.Context, *GetUserByTelegramIdRequest, *User) error
+	// Получить список пользователей с правами администратора
+	GetAdminUsers(context.Context, *emptypb.Empty, *GetAdminUsersResponse) error
 }
 
 func RegisterRmsUsersHandler(s server.Server, hdlr RmsUsersHandler, opts ...server.HandlerOption) error {
@@ -102,6 +117,7 @@ func RegisterRmsUsersHandler(s server.Server, hdlr RmsUsersHandler, opts ...serv
 		GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error
 		RegisterUser(ctx context.Context, in *User, out *RegisterUserResponse) error
 		GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, out *User) error
+		GetAdminUsers(ctx context.Context, in *emptypb.Empty, out *GetAdminUsersResponse) error
 	}
 	type RmsUsers struct {
 		rmsUsers
@@ -124,4 +140,8 @@ func (h *rmsUsersHandler) RegisterUser(ctx context.Context, in *User, out *Regis
 
 func (h *rmsUsersHandler) GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, out *User) error {
 	return h.RmsUsersHandler.GetUserByTelegramId(ctx, in, out)
+}
+
+func (h *rmsUsersHandler) GetAdminUsers(ctx context.Context, in *emptypb.Empty, out *GetAdminUsersResponse) error {
+	return h.RmsUsersHandler.GetAdminUsers(ctx, in, out)
 }

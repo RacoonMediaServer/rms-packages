@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "../rms-users";
 
+import "google/protobuf/empty.proto";
+
 service RmsUsers {
   // Получить права доступа с указанным API-токеном
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
@@ -11,6 +13,9 @@ service RmsUsers {
 
   // Получить аккаунт пользователя по его идентификатору в Telegram
   rpc GetUserByTelegramId(GetUserByTelegramIdRequest) returns (User);
+
+  // Получить список пользователей с правами администратора
+  rpc GetAdminUsers(google.protobuf.Empty) returns(GetAdminUsersResponse);
 }
 
 enum Permissions {
@@ -59,5 +64,9 @@ message RegisterUserResponse {
 
 message GetUserByTelegramIdRequest {
   int32 telegramUserId = 1;
+}
+
+message GetAdminUsersResponse {
+  repeated User users = 1;
 }
 
