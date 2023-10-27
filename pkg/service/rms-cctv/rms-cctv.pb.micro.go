@@ -51,9 +51,9 @@ type RmsCctvService interface {
 	// Удалить камеру
 	DeleteCamera(ctx context.Context, in *DeleteCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Получить URI для проигрывания
-	GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetLiveUriResponse, error)
+	GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
 	// Получить URI для проигрывания архива
-	GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetReplayUriRequest, error)
+	GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
 	// Получить изображение с камеры
 	GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error)
 }
@@ -130,9 +130,9 @@ func (c *rmsCctvService) DeleteCamera(ctx context.Context, in *DeleteCameraReque
 	return out, nil
 }
 
-func (c *rmsCctvService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetLiveUriResponse, error) {
+func (c *rmsCctvService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsCctv.GetLiveUri", in)
-	out := new(GetLiveUriResponse)
+	out := new(GetUriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -140,9 +140,9 @@ func (c *rmsCctvService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, 
 	return out, nil
 }
 
-func (c *rmsCctvService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetReplayUriRequest, error) {
+func (c *rmsCctvService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsCctv.GetReplayUri", in)
-	out := new(GetReplayUriRequest)
+	out := new(GetUriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -176,9 +176,9 @@ type RmsCctvHandler interface {
 	// Удалить камеру
 	DeleteCamera(context.Context, *DeleteCameraRequest, *emptypb.Empty) error
 	// Получить URI для проигрывания
-	GetLiveUri(context.Context, *GetLiveUriRequest, *GetLiveUriResponse) error
+	GetLiveUri(context.Context, *GetLiveUriRequest, *GetUriResponse) error
 	// Получить URI для проигрывания архива
-	GetReplayUri(context.Context, *GetReplayUriRequest, *GetReplayUriRequest) error
+	GetReplayUri(context.Context, *GetReplayUriRequest, *GetUriResponse) error
 	// Получить изображение с камеры
 	GetSnapshot(context.Context, *GetSnapshotRequest, *GetSnapshotResponse) error
 }
@@ -191,8 +191,8 @@ func RegisterRmsCctvHandler(s server.Server, hdlr RmsCctvHandler, opts ...server
 		AddCamera(ctx context.Context, in *Camera, out *AddCameraResponse) error
 		ModifyCamera(ctx context.Context, in *Camera, out *emptypb.Empty) error
 		DeleteCamera(ctx context.Context, in *DeleteCameraRequest, out *emptypb.Empty) error
-		GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetLiveUriResponse) error
-		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetReplayUriRequest) error
+		GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error
+		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error
 		GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error
 	}
 	type RmsCctv struct {
@@ -230,11 +230,11 @@ func (h *rmsCctvHandler) DeleteCamera(ctx context.Context, in *DeleteCameraReque
 	return h.RmsCctvHandler.DeleteCamera(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetLiveUriResponse) error {
+func (h *rmsCctvHandler) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error {
 	return h.RmsCctvHandler.GetLiveUri(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetReplayUriRequest) error {
+func (h *rmsCctvHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error {
 	return h.RmsCctvHandler.GetReplayUri(ctx, in, out)
 }
 

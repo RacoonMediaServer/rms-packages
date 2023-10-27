@@ -25,10 +25,10 @@ service RmsCctv {
   rpc DeleteCamera(DeleteCameraRequest) returns(google.protobuf.Empty);
 
   // Получить URI для проигрывания
-  rpc GetLiveUri(GetLiveUriRequest) returns(GetLiveUriResponse);
+  rpc GetLiveUri(GetLiveUriRequest) returns(GetUriResponse);
 
   // Получить URI для проигрывания архива
-  rpc GetReplayUri(GetReplayUriRequest) returns (GetReplayUriRequest);
+  rpc GetReplayUri(GetReplayUriRequest) returns (GetUriResponse);
 
   // Получить изображение с камеры
   rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
@@ -109,9 +109,12 @@ message GetLiveUriRequest {
 
   // Протокол для формирования ссылки
   VideoTransport transport = 2;
+
+  // Брать ли поток с наилучшим качеством
+  bool mainProfile = 3;
 }
 
-message GetLiveUriResponse {
+message GetUriResponse {
   // URI для воспроизведения
   string uri = 1;
 }
@@ -124,7 +127,7 @@ message GetReplayUriRequest {
   VideoTransport transport = 2;
 
   // С какого момента начать показывать запись
-  google.protobuf.Timestamp timestamp = 3;
+  optional google.protobuf.Timestamp timestamp = 3;
 }
 
 message GetSnapshotRequest {
