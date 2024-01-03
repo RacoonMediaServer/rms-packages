@@ -19,8 +19,15 @@ type Database struct {
 
 // Monitor is monitoring settings
 type Monitor struct {
-	Host string
-	Port int
+	Enabled bool
+	Host    string
+	Port    int
+}
+
+// Debug represents debug settings
+type Debug struct {
+	Verbose bool
+	Monitor Monitor
 }
 
 // Http settings of the web server
