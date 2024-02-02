@@ -23,6 +23,7 @@ import (
 //go:generate ../rms-notes/gen.sh
 //go:generate ../rms-cctv/gen.sh
 //go:generate ../rms-backup/gen.sh
+//go:generate ../cctv-backend/gen.sh
 
 // ClientFactory can spawn microservices clients
 type ClientFactory interface {

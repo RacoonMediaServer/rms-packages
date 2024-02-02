@@ -101,13 +101,19 @@ message GetRecordingUriRequest {
 }
 
 message SetRecordingStateRequest {
+  // ID записи
+  string recordingId = 1;
+
   // Зпись на паузе или нет
-  bool pause = 1;
+  bool pause = 2;
 }
 
 message SetRecordingQualityRequest {
+  // ID записи
+  string recordingId = 1;
+
   // Качество записи (0 - как есть, 1 - прорежено до 1 опорного кдра/GOP, 2 - до 1 опорного кадра из 2х GOP)
-  uint32 quality = 1;
+  uint32 quality = 2;
 }
 
 message RemoveRecordingRequest {
