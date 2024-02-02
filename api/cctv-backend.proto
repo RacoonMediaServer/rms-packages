@@ -11,7 +11,7 @@ service Stream {
   rpc AddStream(AddStreamRequest) returns (AddStreamResponse);
 
   // Получить ссылку на ретрансляцию потока
-  rpc GetStreamUri(GetStreamUriRequest) returns (GetUriResponse);
+  rpc GetStreamUri(GetStreamUriRequest) returns (UriResponse);
 
   // Удалить поток
   rpc RemoveStream(RemoveStreamRequest) returns (google.protobuf.Empty);
@@ -22,7 +22,7 @@ service Recording {
   rpc AddRecording(AddRecordingRequest) returns (AddRecordingResponse);
 
   // Получить ссылку на воспроизведение записи
-  rpc GetRecordingUri(GetRecordingUriRequest) returns (GetUriResponse);
+  rpc GetRecordingUri(GetRecordingUriRequest) returns (UriResponse);
 
   // Возобновить/остановить запись
   rpc SetRecordingState(SetRecordingStateRequest) returns (google.protobuf.Empty);
@@ -68,7 +68,7 @@ message GetStreamUriRequest {
   optional video.Transport transport = 2;
 }
 
-message GetUriResponse {
+message UriResponse {
   // URL на поток
   string uri = 1;
 

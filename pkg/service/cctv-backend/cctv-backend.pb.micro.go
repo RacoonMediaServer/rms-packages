@@ -42,7 +42,7 @@ type StreamService interface {
 	// Добавить URL на медиа поток
 	AddStream(ctx context.Context, in *AddStreamRequest, opts ...client.CallOption) (*AddStreamResponse, error)
 	// Получить ссылку на ретрансляцию потока
-	GetStreamUri(ctx context.Context, in *GetStreamUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
+	GetStreamUri(ctx context.Context, in *GetStreamUriRequest, opts ...client.CallOption) (*UriResponse, error)
 	// Удалить поток
 	RemoveStream(ctx context.Context, in *RemoveStreamRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
@@ -69,9 +69,9 @@ func (c *streamService) AddStream(ctx context.Context, in *AddStreamRequest, opt
 	return out, nil
 }
 
-func (c *streamService) GetStreamUri(ctx context.Context, in *GetStreamUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
+func (c *streamService) GetStreamUri(ctx context.Context, in *GetStreamUriRequest, opts ...client.CallOption) (*UriResponse, error) {
 	req := c.c.NewRequest(c.name, "Stream.GetStreamUri", in)
-	out := new(GetUriResponse)
+	out := new(UriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ type StreamHandler interface {
 	// Добавить URL на медиа поток
 	AddStream(context.Context, *AddStreamRequest, *AddStreamResponse) error
 	// Получить ссылку на ретрансляцию потока
-	GetStreamUri(context.Context, *GetStreamUriRequest, *GetUriResponse) error
+	GetStreamUri(context.Context, *GetStreamUriRequest, *UriResponse) error
 	// Удалить поток
 	RemoveStream(context.Context, *RemoveStreamRequest, *emptypb.Empty) error
 }
@@ -103,7 +103,7 @@ type StreamHandler interface {
 func RegisterStreamHandler(s server.Server, hdlr StreamHandler, opts ...server.HandlerOption) error {
 	type stream interface {
 		AddStream(ctx context.Context, in *AddStreamRequest, out *AddStreamResponse) error
-		GetStreamUri(ctx context.Context, in *GetStreamUriRequest, out *GetUriResponse) error
+		GetStreamUri(ctx context.Context, in *GetStreamUriRequest, out *UriResponse) error
 		RemoveStream(ctx context.Context, in *RemoveStreamRequest, out *emptypb.Empty) error
 	}
 	type Stream struct {
@@ -121,7 +121,7 @@ func (h *streamHandler) AddStream(ctx context.Context, in *AddStreamRequest, out
 	return h.StreamHandler.AddStream(ctx, in, out)
 }
 
-func (h *streamHandler) GetStreamUri(ctx context.Context, in *GetStreamUriRequest, out *GetUriResponse) error {
+func (h *streamHandler) GetStreamUri(ctx context.Context, in *GetStreamUriRequest, out *UriResponse) error {
 	return h.StreamHandler.GetStreamUri(ctx, in, out)
 }
 
@@ -141,7 +141,7 @@ type RecordingService interface {
 	// Поставить поток на запись
 	AddRecording(ctx context.Context, in *AddRecordingRequest, opts ...client.CallOption) (*AddRecordingResponse, error)
 	// Получить ссылку на воспроизведение записи
-	GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
+	GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, opts ...client.CallOption) (*UriResponse, error)
 	// Возобновить/остановить запись
 	SetRecordingState(ctx context.Context, in *SetRecordingStateRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Установить качество записи (прореживание)
@@ -172,9 +172,9 @@ func (c *recordingService) AddRecording(ctx context.Context, in *AddRecordingReq
 	return out, nil
 }
 
-func (c *recordingService) GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
+func (c *recordingService) GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, opts ...client.CallOption) (*UriResponse, error) {
 	req := c.c.NewRequest(c.name, "Recording.GetRecordingUri", in)
-	out := new(GetUriResponse)
+	out := new(UriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -218,7 +218,7 @@ type RecordingHandler interface {
 	// Поставить поток на запись
 	AddRecording(context.Context, *AddRecordingRequest, *AddRecordingResponse) error
 	// Получить ссылку на воспроизведение записи
-	GetRecordingUri(context.Context, *GetRecordingUriRequest, *GetUriResponse) error
+	GetRecordingUri(context.Context, *GetRecordingUriRequest, *UriResponse) error
 	// Возобновить/остановить запись
 	SetRecordingState(context.Context, *SetRecordingStateRequest, *emptypb.Empty) error
 	// Установить качество записи (прореживание)
@@ -230,7 +230,7 @@ type RecordingHandler interface {
 func RegisterRecordingHandler(s server.Server, hdlr RecordingHandler, opts ...server.HandlerOption) error {
 	type recording interface {
 		AddRecording(ctx context.Context, in *AddRecordingRequest, out *AddRecordingResponse) error
-		GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, out *GetUriResponse) error
+		GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, out *UriResponse) error
 		SetRecordingState(ctx context.Context, in *SetRecordingStateRequest, out *emptypb.Empty) error
 		SetRecordingQuality(ctx context.Context, in *SetRecordingQualityRequest, out *emptypb.Empty) error
 		RemoveRecording(ctx context.Context, in *RemoveRecordingRequest, out *emptypb.Empty) error
@@ -250,7 +250,7 @@ func (h *recordingHandler) AddRecording(ctx context.Context, in *AddRecordingReq
 	return h.RecordingHandler.AddRecording(ctx, in, out)
 }
 
-func (h *recordingHandler) GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, out *GetUriResponse) error {
+func (h *recordingHandler) GetRecordingUri(ctx context.Context, in *GetRecordingUriRequest, out *UriResponse) error {
 	return h.RecordingHandler.GetRecordingUri(ctx, in, out)
 }
 
