@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+import "video.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "../cctv-backend";
+
+service Stream {
+  // Добавить URL на медиа поток
+  rpc AddStream(AddStreamRequest) returns (AddStreamResponse);
+
+  // Получить ссылку на ретрансляцию потока
+  rpc GetStreamUri(GetStreamUriRequest) returns (GetUriResponse);
+
+  // Удалить поток
+  rpc RemoveStream(RemoveStreamRequest) returns (google.protobuf.Empty);
+}
+
+service Recording {
+  // Поставить поток на запись
+  rpc AddRecording(AddRecordingRequest) returns (AddRecordingResponse);
+
+  // Получить ссылку на воспроизведение записи
+  rpc GetRecordingUri(GetRecordingUriRequest) returns (GetUriResponse);
+
+  // Возобновить/остановить запись
+  rpc SetRecordingState(SetRecordingStateRequest) returns (google.protobuf.Empty);
+
+  // Установить качество записи (прореживание)
+  rpc SetRecordingQuality(SetRecordingQualityRequest) returns (google.protobuf.Empty);
+
+  // Удалить запись
+  rpc RemoveRecording(RemoveRecordingRequest) returns (google.protobuf.Empty);
+}
+
+service System {
+  // Получить бекап настроек, БД и пр.
+  rpc GetBackup(google.protobuf.Empty) returns (GetBackupResponse);
+}
+
+message AddStreamRequest {
+  // Номер камеры в системы (может быть нужен для генерации ID)
+  uint32 cameraNo = 1;
+
+  // Порекомендовать текстовый ID для потока
+  string adviceId = 2;
+
+  // URL птока
+  string url = 3;
+}
+
+message AddStreamResponse {
+  // Идентификатор созданного потока
+  string streamId = 1;
+}
+
+message RemoveStreamRequest {
+  // Идентификатор потока
+  string streamId = 1;
+}
+
+message GetStreamUriRequest {
+  // Идентификатор потока
+  string streamId = 1;
+
+  // Транспорт для получения потока
+  optional video.Transport transport = 2;
+}
+
+message GetUriResponse {
+  // URL на поток
+  string uri = 1;
+
+  // Реальный транспорт, для которого выдана ссылка
+  video.Transport transport = 2;
+}
+
+message AddRecordingRequest {
+  // Идентификатор потока
+  string streamId = 1;
+
+  // Сколько дней хранить архив
+  uint32 rotationDays = 2;
+}
+
+message AddRecordingResponse {
+  // ID записи
+  string recordingId = 1;
+}
+
+message GetRecordingUriRequest {
+  // Идентификатор потока
+  string streamId = 1;
+
+  // Транспорт для получения потока
+  optional video.Transport transport = 2;
+
+  // С какого времени играть запись
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+message SetRecordingStateRequest {
+  // Зпись на паузе или нет
+  bool pause = 1;
+}
+
+message SetRecordingQualityRequest {
+  // Качество записи (0 - как есть, 1 - прорежено до 1 опорного кдра/GOP, 2 - до 1 опорного кадра из 2х GOP)
+  uint32 quality = 1;
+}
+
+message RemoveRecordingRequest {
+  // ID записи
+  string recordingId = 1;
+
+  // Сохранить ли записанные на диск данные
+  bool saveRecordedData = 2;
+}
+
+message GetBackupResponse {
+  // Данные бекапа
+  bytes rawData = 1;
+
+  // MIME тип
+  string mimeType = 2;
+}

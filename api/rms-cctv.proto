@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+import "video.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -51,17 +52,6 @@ enum RecordingMode {
   Optimal = 3;
 }
 
-enum VideoTransport {
-  RTSP = 0;
-  HTTP_HLS_MPEGTS = 1;
-  HTTP_HLS_MP4 = 2;
-  HTTP_HLS_ONE_CHUNK = 3;
-  HTTP_MP4 = 4;
-  HTTP_FLV = 5;
-  HTTP_MPEGTS = 6;
-  HTTP_DASH = 7;
-}
-
 message Camera {
   // Внутренний идентификатор камеры
   uint32 id = 1;
@@ -108,7 +98,7 @@ message GetLiveUriRequest {
   uint32 cameraId = 1;
 
   // Протокол для формирования ссылки
-  VideoTransport transport = 2;
+  video.Transport transport = 2;
 
   // Брать ли поток с наилучшим качеством
   bool mainProfile = 3;
@@ -124,7 +114,7 @@ message GetReplayUriRequest {
   uint32 cameraId = 1;
 
   // Протокол для формирования ссылки
-  VideoTransport transport = 2;
+  video.Transport transport = 2;
 
   // С какого момента начать показывать запись
   optional google.protobuf.Timestamp timestamp = 3;

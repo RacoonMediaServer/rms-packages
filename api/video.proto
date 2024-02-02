@@ -1,0 +1,15 @@
+syntax = "proto3";
+package video;
+
+option go_package = "github.com/RacoonMediaServer/rms-packages/pkg/video";
+
+enum Transport {
+  RTSP = 0;
+  HTTP_HLS_MPEGTS = 1;
+  HTTP_HLS_MP4 = 2;
+  HTTP_HLS_ONE_CHUNK = 3;
+  HTTP_MP4 = 4;
+  HTTP_FLV = 5;
+  HTTP_MPEGTS = 6;
+  HTTP_DASH = 7;
+}
