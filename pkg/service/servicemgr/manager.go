@@ -1,6 +1,7 @@
 package servicemgr
 
 import (
+	cctv_backend "github.com/RacoonMediaServer/rms-packages/pkg/service/cctv-backend"
 	rms_backup "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-backup"
 	rms_bot_client "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-client"
 	rms_bot_server "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-bot-server"
@@ -82,4 +83,15 @@ func (f ServiceFactory) NewCctv() rms_cctv.RmsCctvService {
 // NewBackup creates connection to rms-backup service
 func (f ServiceFactory) NewBackup() rms_backup.RmsBackupService {
 	return rms_backup.NewRmsBackupService("rms-backup", f.constructor.Client())
+}
+
+func (f ServiceFactory) NewCctvStreamService() cctv_backend.StreamService {
+	return cctv_backend.NewStreamService("cctv-backend", f.constructor.Client())
+}
+
+func (f ServiceFactory) NewCctvRecordingService() cctv_backend.RecordingService {
+	return cctv_backend.NewRecordingService("cctv-backend", f.constructor.Client())
+}
+func (f ServiceFactory) NewCctvSystemService() cctv_backend.SystemService {
+	return cctv_backend.NewSystemService("cctv-backend", f.constructor.Client())
 }
