@@ -19,6 +19,9 @@ service RmsLibrary {
   // скачать выбранную раздачу
   rpc DownloadTorrent(DownloadTorrentRequest) returns (google.protobuf.Empty);
 
+  // Згрузить торрент-файл фильма или сериала
+  rpc UploadMovie(UploadMovieRequest) returns (google.protobuf.Empty);
+
   // получить список доступных новых сезонов для скачивания
   rpc GetTvSeriesUpdates(google.protobuf.Empty) returns (GetTvSeriesUpdatesResponse);
 
@@ -208,6 +211,20 @@ message GetMovieResponse {
 
 message DeleteMovieRequest {
   string ID = 1;
+}
+
+message UploadMovieRequest {
+  // ID фильма или сериала
+  string id = 1;
+
+  // общая информация о Movie
+  MovieInfo info = 2;
+
+  // номер сезона, если есть
+  optional uint32 seasonNo = 3;
+
+  // торрент-файл для загрузки
+  bytes torrentFile = 4;
 }
 
 

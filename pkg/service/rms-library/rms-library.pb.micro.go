@@ -47,6 +47,8 @@ type RmsLibraryService interface {
 	FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
 	// скачать выбранную раздачу
 	DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// Згрузить торрент-файл фильма или сериала
+	UploadMovie(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error)
 	// получить список фильмов/сериалов и пути к их контенту
@@ -119,6 +121,16 @@ func (c *rmsLibraryService) DownloadTorrent(ctx context.Context, in *DownloadTor
 	return out, nil
 }
 
+func (c *rmsLibraryService) UploadMovie(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.UploadMovie", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rmsLibraryService) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsLibrary.GetTvSeriesUpdates", in)
 	out := new(GetTvSeriesUpdatesResponse)
@@ -172,6 +184,8 @@ type RmsLibraryHandler interface {
 	FindTorrents(context.Context, *FindTorrentsRequest, *FindTorrentsResponse) error
 	// скачать выбранную раздачу
 	DownloadTorrent(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+	// Згрузить торрент-файл фильма или сериала
+	UploadMovie(context.Context, *UploadMovieRequest, *emptypb.Empty) error
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(context.Context, *emptypb.Empty, *GetTvSeriesUpdatesResponse) error
 	// получить список фильмов/сериалов и пути к их контенту
@@ -189,6 +203,7 @@ func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...
 		FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error
 		FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error
 		DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+		UploadMovie(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error
 		GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error
 		GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
 		GetMovie(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error
@@ -223,6 +238,10 @@ func (h *rmsLibraryHandler) FindTorrents(ctx context.Context, in *FindTorrentsRe
 
 func (h *rmsLibraryHandler) DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
 	return h.RmsLibraryHandler.DownloadTorrent(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) UploadMovie(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error {
+	return h.RmsLibraryHandler.UploadMovie(ctx, in, out)
 }
 
 func (h *rmsLibraryHandler) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error {
