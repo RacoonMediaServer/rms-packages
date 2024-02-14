@@ -46,8 +46,11 @@ message AddStreamRequest {
   // Порекомендовать текстовый ID для потока
   string adviceId = 2;
 
-  // URL птока
+  // URL потока
   string url = 3;
+
+  // Расположение камеры
+  string Location = 4;
 }
 
 message AddStreamResponse {
