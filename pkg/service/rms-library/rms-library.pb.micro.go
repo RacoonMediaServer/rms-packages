@@ -47,7 +47,7 @@ type RmsLibraryService interface {
 	FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
 	// скачать выбранную раздачу
 	DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
-	// Згрузить торрент-файл фильма или сериала
+	// Згрузить торрент-файл фильма или сериала или просто ролика
 	UploadMovie(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error)
@@ -184,7 +184,7 @@ type RmsLibraryHandler interface {
 	FindTorrents(context.Context, *FindTorrentsRequest, *FindTorrentsResponse) error
 	// скачать выбранную раздачу
 	DownloadTorrent(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
-	// Згрузить торрент-файл фильма или сериала
+	// Згрузить торрент-файл фильма или сериала или просто ролика
 	UploadMovie(context.Context, *UploadMovieRequest, *emptypb.Empty) error
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(context.Context, *emptypb.Empty, *GetTvSeriesUpdatesResponse) error

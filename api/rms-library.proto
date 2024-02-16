@@ -19,7 +19,7 @@ service RmsLibrary {
   // скачать выбранную раздачу
   rpc DownloadTorrent(DownloadTorrentRequest) returns (google.protobuf.Empty);
 
-  // Згрузить торрент-файл фильма или сериала
+  // Згрузить торрент-файл фильма или сериала или просто ролика
   rpc UploadMovie(UploadMovieRequest) returns (google.protobuf.Empty);
 
   // получить список доступных новых сезонов для скачивания
@@ -45,6 +45,7 @@ message SearchMovieRequest {
 enum MovieType {
   TvSeries = 0;
   Film = 1;
+  Clip = 2;
 }
 
 // структура описывает общую информацию о фильме/сериале
