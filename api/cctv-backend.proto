@@ -2,7 +2,6 @@ syntax = "proto3";
 
 import "video.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 
 option go_package = "../cctv-backend";
 
@@ -99,8 +98,8 @@ message GetRecordingUriRequest {
   // Транспорт для получения потока
   optional video.Transport transport = 2;
 
-  // С какого времени играть запись
-  google.protobuf.Timestamp timestamp = 3;
+  // С какого времени играть запись (Unix time, UTC)
+  uint64 timestamp = 3;
 }
 
 message SetRecordingStateRequest {
