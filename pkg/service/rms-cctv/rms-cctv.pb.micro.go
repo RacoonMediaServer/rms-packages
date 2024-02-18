@@ -8,7 +8,6 @@ import (
 	_ "github.com/RacoonMediaServer/rms-packages/pkg/video"
 	proto "google.golang.org/protobuf/proto"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
 	math "math"
 )
 
