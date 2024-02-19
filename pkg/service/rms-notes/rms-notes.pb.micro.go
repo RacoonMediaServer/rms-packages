@@ -37,6 +37,10 @@ func NewRmsNotesEndpoints() []*api.Endpoint {
 // Client API for RmsNotes service
 
 type RmsNotesService interface {
+	// Может ли пользователь Telegram работать с заметками
+	IsUserLogged(ctx context.Context, in *IsUserLoggedRequest, opts ...client.CallOption) (*IsUserLoggedResponse, error)
+	// Привязать заметки к учетной записи пользователя Telegram
+	UserLogin(ctx context.Context, in *UserLoginRequest, opts ...client.CallOption) (*UserLoginResponse, error)
 	// Добавить заметку
 	AddNote(ctx context.Context, in *AddNoteRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Добавить задачу
@@ -61,6 +65,26 @@ func NewRmsNotesService(name string, c client.Client) RmsNotesService {
 		c:    c,
 		name: name,
 	}
+}
+
+func (c *rmsNotesService) IsUserLogged(ctx context.Context, in *IsUserLoggedRequest, opts ...client.CallOption) (*IsUserLoggedResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsNotes.IsUserLogged", in)
+	out := new(IsUserLoggedResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsNotesService) UserLogin(ctx context.Context, in *UserLoginRequest, opts ...client.CallOption) (*UserLoginResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsNotes.UserLogin", in)
+	out := new(UserLoginResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *rmsNotesService) AddNote(ctx context.Context, in *AddNoteRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
@@ -126,6 +150,10 @@ func (c *rmsNotesService) SetSettings(ctx context.Context, in *NotesSettings, op
 // Server API for RmsNotes service
 
 type RmsNotesHandler interface {
+	// Может ли пользователь Telegram работать с заметками
+	IsUserLogged(context.Context, *IsUserLoggedRequest, *IsUserLoggedResponse) error
+	// Привязать заметки к учетной записи пользователя Telegram
+	UserLogin(context.Context, *UserLoginRequest, *UserLoginResponse) error
 	// Добавить заметку
 	AddNote(context.Context, *AddNoteRequest, *emptypb.Empty) error
 	// Добавить задачу
@@ -142,6 +170,8 @@ type RmsNotesHandler interface {
 
 func RegisterRmsNotesHandler(s server.Server, hdlr RmsNotesHandler, opts ...server.HandlerOption) error {
 	type rmsNotes interface {
+		IsUserLogged(ctx context.Context, in *IsUserLoggedRequest, out *IsUserLoggedResponse) error
+		UserLogin(ctx context.Context, in *UserLoginRequest, out *UserLoginResponse) error
 		AddNote(ctx context.Context, in *AddNoteRequest, out *emptypb.Empty) error
 		AddTask(ctx context.Context, in *AddTaskRequest, out *emptypb.Empty) error
 		SnoozeTask(ctx context.Context, in *SnoozeTaskRequest, out *emptypb.Empty) error
@@ -158,6 +188,14 @@ func RegisterRmsNotesHandler(s server.Server, hdlr RmsNotesHandler, opts ...serv
 
 type rmsNotesHandler struct {
 	RmsNotesHandler
+}
+
+func (h *rmsNotesHandler) IsUserLogged(ctx context.Context, in *IsUserLoggedRequest, out *IsUserLoggedResponse) error {
+	return h.RmsNotesHandler.IsUserLogged(ctx, in, out)
+}
+
+func (h *rmsNotesHandler) UserLogin(ctx context.Context, in *UserLoginRequest, out *UserLoginResponse) error {
+	return h.RmsNotesHandler.UserLogin(ctx, in, out)
 }
 
 func (h *rmsNotesHandler) AddNote(ctx context.Context, in *AddNoteRequest, out *emptypb.Empty) error {

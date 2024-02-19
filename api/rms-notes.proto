@@ -5,6 +5,12 @@ import "google/protobuf/empty.proto";
 option go_package = "../rms-notes";
 
 service RmsNotes {
+  // Может ли пользователь Telegram работать с заметками
+  rpc IsUserLogged(IsUserLoggedRequest) returns (IsUserLoggedResponse);
+
+  // Привязать заметки к учетной записи пользователя Telegram
+  rpc UserLogin(UserLoginRequest) returns (UserLoginResponse);
+
   // Добавить заметку
   rpc AddNote(AddNoteRequest) returns (google.protobuf.Empty);
 
@@ -24,18 +30,58 @@ service RmsNotes {
   rpc SetSettings(NotesSettings) returns (google.protobuf.Empty);
 }
 
+message IsUserLoggedRequest {
+  // Пользователь Telegram
+  int32 user = 1;
+}
+
+message IsUserLoggedResponse {
+  bool result = 1;
+}
+
+message UserLoginRequest {
+  // URL для подключения к Nextcloud
+  string endpoint = 1;
+
+  // ID пользователя
+  string login = 2;
+
+  // Пароль пользователя
+  string password = 3;
+
+  // ID телеграм пользователя
+  int32 user = 4;
+}
+
+message UserLoginResponse {
+  enum ErrorCode {
+    OK = 0;
+    ConnectionError = 1;
+    InvalidCredentials = 2;
+  }
+  ErrorCode code = 1;
+}
+
 message AddNoteRequest {
   // Заголовок заметки
   string title = 1;
+
   // Текст заметки
   string text = 2;
+
+  // ID пользователя Telegram
+  int32 user = 3;
 }
 
 message AddTaskRequest {
   // Текст задачи
   string text = 1;
+
   // Дата задачи в формате yyyy-mm-dd
   optional string dueDate = 2;
+
+  // ID пользователя Telegram
+  int32 user = 3;
 }
 
 message SnoozeTaskRequest {
@@ -44,11 +90,17 @@ message SnoozeTaskRequest {
 
   // Дата задачи в формате yyyy-mm-dd
   optional string dueDate = 2;
+
+  // ID пользователя Telegram
+  int32 user = 3;
 }
 
 message DoneTaskRequest {
   // ID задачи
   string id = 1;
+
+  // ID пользователя Telegram
+  int32 user = 2;
 }
 
 message NotesSettings {
