@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-transcoder";
+
+service Profiles {
+  // Добавить профиль с параметрами транскодирования
+  rpc AddProfile(Profile) returns (google.protobuf.Empty);
+
+  // Получить все профили
+  rpc GetProfiles(google.protobuf.Empty) returns (GetProfilesResponse);
+
+  // Удалить профиль
+  rpc RemoveProfile(RemoveProfileRequest) returns (google.protobuf.Empty);
+}
+
+service Transcoder {
+  // Добавить задачу транскодирования
+  rpc AddTask(AddTaskRequest) returns (AddTaskResponse);
+
+  // Получить статус задачи
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+
+  // Отменить задачу (должно вызываться для каждой запущенной задачи)
+  rpc CancelTask(CancelTaskRequest) returns (google.protobuf.Empty);
+}
+
+message Profile {
+  // Идентификатор профиля
+  string id = 1;
+
+  // Настройки для транскодирования видео
+  Video video = 2;
+
+  // Настройки аудио
+  Audio audio = 3;
+
+  // Флаг, что профиль зарезервирован в системе и его нельзя удалить
+  bool isReserved = 4;
+}
+
+message Video {
+  // Замьютить дорожку
+  bool mute = 1;
+
+  // Кодек
+  optional string codec = 2;
+
+  // Разрешение
+  optional uint32 width = 3;
+  optional uint32 height = 4;
+
+  // Битрейт
+  optional uint32 bitrate = 5;
+}
+
+message Audio {
+  // Замьютить дорожку
+  bool mute = 1;
+
+  // Кодек
+  optional string codec = 2;
+}
+
+message GetProfilesResponse {
+  repeated Profile profiles = 1;
+}
+
+message RemoveProfileRequest {
+  // Идентификатор профиля
+  string id = 1;
+}
+
+message AddTaskRequest {
+  // Профиль с настройками транскодирования
+  string profile = 1;
+
+  // Путь к тому, что транскодировать
+  string source = 2;
+
+  // Куда положить результат
+  string destination = 3;
+
+  // Автоматически удалить задачу по завершении и отправить событие
+  bool autoComplete = 4;
+}
+
+message AddTaskResponse {
+  // ID созданной задачи
+  string taskId = 1;
+}
+
+message GetTaskRequest {
+  string taskId = 1;
+}
+
+message GetTaskResponse {
+  enum Status {
+    Pending = 0;
+    Processing = 1;
+    Failed = 3;
+    Done = 4;
+  }
+
+  // Состояние задачи
+  Status status = 1;
+
+  // Путь к выходному файлу
+  string destination = 2;
+}
+
+message CancelTaskRequest {
+  string taskId = 1;
+}
