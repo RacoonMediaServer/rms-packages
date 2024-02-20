@@ -46,6 +46,9 @@ message Profile {
 
   // Флаг, что профиль зарезервирован в системе и его нельзя удалить
   bool isReserved = 9;
+
+  // Флаг, что профиль доступен только для чтения
+  bool isReadOnly = 10;
 }
 
 message GetProfilesResponse {
