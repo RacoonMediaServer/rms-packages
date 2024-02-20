@@ -17,13 +17,13 @@ service Profiles {
 
 service Transcoder {
   // Добавить задачу транскодирования
-  rpc AddTask(AddTaskRequest) returns (AddTaskResponse);
+  rpc AddJob(AddJobRequest) returns (AddJobResponse);
 
   // Получить статус задачи
-  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc GetJob(GetJobRequest) returns (GetJobResponse);
 
   // Отменить задачу (должно вызываться для каждой запущенной задачи)
-  rpc CancelTask(CancelTaskRequest) returns (google.protobuf.Empty);
+  rpc CancelJob(CancelJobRequest) returns (google.protobuf.Empty);
 }
 
 message Profile {
@@ -72,7 +72,7 @@ message RemoveProfileRequest {
   string id = 1;
 }
 
-message AddTaskRequest {
+message AddJobRequest {
   // Профиль с настройками транскодирования
   string profile = 1;
 
@@ -86,16 +86,16 @@ message AddTaskRequest {
   bool autoComplete = 4;
 }
 
-message AddTaskResponse {
+message AddJobResponse {
   // ID созданной задачи
   string taskId = 1;
 }
 
-message GetTaskRequest {
+message GetJobRequest {
   string taskId = 1;
 }
 
-message GetTaskResponse {
+message GetJobResponse {
   enum Status {
     Pending = 0;
     Processing = 1;
@@ -110,6 +110,6 @@ message GetTaskResponse {
   string destination = 2;
 }
 
-message CancelTaskRequest {
+message CancelJobRequest {
   string taskId = 1;
 }

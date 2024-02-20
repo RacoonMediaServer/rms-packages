@@ -137,11 +137,11 @@ func NewTranscoderEndpoints() []*api.Endpoint {
 
 type TranscoderService interface {
 	// Добавить задачу транскодирования
-	AddTask(ctx context.Context, in *AddTaskRequest, opts ...client.CallOption) (*AddTaskResponse, error)
+	AddJob(ctx context.Context, in *AddJobRequest, opts ...client.CallOption) (*AddJobResponse, error)
 	// Получить статус задачи
-	GetTask(ctx context.Context, in *GetTaskRequest, opts ...client.CallOption) (*GetTaskResponse, error)
+	GetJob(ctx context.Context, in *GetJobRequest, opts ...client.CallOption) (*GetJobResponse, error)
 	// Отменить задачу (должно вызываться для каждой запущенной задачи)
-	CancelTask(ctx context.Context, in *CancelTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	CancelJob(ctx context.Context, in *CancelJobRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
 
 type transcoderService struct {
@@ -156,9 +156,9 @@ func NewTranscoderService(name string, c client.Client) TranscoderService {
 	}
 }
 
-func (c *transcoderService) AddTask(ctx context.Context, in *AddTaskRequest, opts ...client.CallOption) (*AddTaskResponse, error) {
-	req := c.c.NewRequest(c.name, "Transcoder.AddTask", in)
-	out := new(AddTaskResponse)
+func (c *transcoderService) AddJob(ctx context.Context, in *AddJobRequest, opts ...client.CallOption) (*AddJobResponse, error) {
+	req := c.c.NewRequest(c.name, "Transcoder.AddJob", in)
+	out := new(AddJobResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -166,9 +166,9 @@ func (c *transcoderService) AddTask(ctx context.Context, in *AddTaskRequest, opt
 	return out, nil
 }
 
-func (c *transcoderService) GetTask(ctx context.Context, in *GetTaskRequest, opts ...client.CallOption) (*GetTaskResponse, error) {
-	req := c.c.NewRequest(c.name, "Transcoder.GetTask", in)
-	out := new(GetTaskResponse)
+func (c *transcoderService) GetJob(ctx context.Context, in *GetJobRequest, opts ...client.CallOption) (*GetJobResponse, error) {
+	req := c.c.NewRequest(c.name, "Transcoder.GetJob", in)
+	out := new(GetJobResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -176,8 +176,8 @@ func (c *transcoderService) GetTask(ctx context.Context, in *GetTaskRequest, opt
 	return out, nil
 }
 
-func (c *transcoderService) CancelTask(ctx context.Context, in *CancelTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "Transcoder.CancelTask", in)
+func (c *transcoderService) CancelJob(ctx context.Context, in *CancelJobRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Transcoder.CancelJob", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -190,18 +190,18 @@ func (c *transcoderService) CancelTask(ctx context.Context, in *CancelTaskReques
 
 type TranscoderHandler interface {
 	// Добавить задачу транскодирования
-	AddTask(context.Context, *AddTaskRequest, *AddTaskResponse) error
+	AddJob(context.Context, *AddJobRequest, *AddJobResponse) error
 	// Получить статус задачи
-	GetTask(context.Context, *GetTaskRequest, *GetTaskResponse) error
+	GetJob(context.Context, *GetJobRequest, *GetJobResponse) error
 	// Отменить задачу (должно вызываться для каждой запущенной задачи)
-	CancelTask(context.Context, *CancelTaskRequest, *emptypb.Empty) error
+	CancelJob(context.Context, *CancelJobRequest, *emptypb.Empty) error
 }
 
 func RegisterTranscoderHandler(s server.Server, hdlr TranscoderHandler, opts ...server.HandlerOption) error {
 	type transcoder interface {
-		AddTask(ctx context.Context, in *AddTaskRequest, out *AddTaskResponse) error
-		GetTask(ctx context.Context, in *GetTaskRequest, out *GetTaskResponse) error
-		CancelTask(ctx context.Context, in *CancelTaskRequest, out *emptypb.Empty) error
+		AddJob(ctx context.Context, in *AddJobRequest, out *AddJobResponse) error
+		GetJob(ctx context.Context, in *GetJobRequest, out *GetJobResponse) error
+		CancelJob(ctx context.Context, in *CancelJobRequest, out *emptypb.Empty) error
 	}
 	type Transcoder struct {
 		transcoder
@@ -214,14 +214,14 @@ type transcoderHandler struct {
 	TranscoderHandler
 }
 
-func (h *transcoderHandler) AddTask(ctx context.Context, in *AddTaskRequest, out *AddTaskResponse) error {
-	return h.TranscoderHandler.AddTask(ctx, in, out)
+func (h *transcoderHandler) AddJob(ctx context.Context, in *AddJobRequest, out *AddJobResponse) error {
+	return h.TranscoderHandler.AddJob(ctx, in, out)
 }
 
-func (h *transcoderHandler) GetTask(ctx context.Context, in *GetTaskRequest, out *GetTaskResponse) error {
-	return h.TranscoderHandler.GetTask(ctx, in, out)
+func (h *transcoderHandler) GetJob(ctx context.Context, in *GetJobRequest, out *GetJobResponse) error {
+	return h.TranscoderHandler.GetJob(ctx, in, out)
 }
 
-func (h *transcoderHandler) CancelTask(ctx context.Context, in *CancelTaskRequest, out *emptypb.Empty) error {
-	return h.TranscoderHandler.CancelTask(ctx, in, out)
+func (h *transcoderHandler) CancelJob(ctx context.Context, in *CancelJobRequest, out *emptypb.Empty) error {
+	return h.TranscoderHandler.CancelJob(ctx, in, out)
 }
