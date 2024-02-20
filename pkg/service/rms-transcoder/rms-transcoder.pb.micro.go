@@ -41,6 +41,8 @@ type ProfilesService interface {
 	AddProfile(ctx context.Context, in *Profile, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Получить все профили
 	GetProfiles(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetProfilesResponse, error)
+	// Обновить профиль
+	UpdateProfile(ctx context.Context, in *Profile, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Удалить профиль
 	RemoveProfile(ctx context.Context, in *RemoveProfileRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
@@ -77,6 +79,16 @@ func (c *profilesService) GetProfiles(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *profilesService) UpdateProfile(ctx context.Context, in *Profile, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Profiles.UpdateProfile", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *profilesService) RemoveProfile(ctx context.Context, in *RemoveProfileRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
 	req := c.c.NewRequest(c.name, "Profiles.RemoveProfile", in)
 	out := new(emptypb.Empty)
@@ -94,6 +106,8 @@ type ProfilesHandler interface {
 	AddProfile(context.Context, *Profile, *emptypb.Empty) error
 	// Получить все профили
 	GetProfiles(context.Context, *emptypb.Empty, *GetProfilesResponse) error
+	// Обновить профиль
+	UpdateProfile(context.Context, *Profile, *emptypb.Empty) error
 	// Удалить профиль
 	RemoveProfile(context.Context, *RemoveProfileRequest, *emptypb.Empty) error
 }
@@ -102,6 +116,7 @@ func RegisterProfilesHandler(s server.Server, hdlr ProfilesHandler, opts ...serv
 	type profiles interface {
 		AddProfile(ctx context.Context, in *Profile, out *emptypb.Empty) error
 		GetProfiles(ctx context.Context, in *emptypb.Empty, out *GetProfilesResponse) error
+		UpdateProfile(ctx context.Context, in *Profile, out *emptypb.Empty) error
 		RemoveProfile(ctx context.Context, in *RemoveProfileRequest, out *emptypb.Empty) error
 	}
 	type Profiles struct {
@@ -121,6 +136,10 @@ func (h *profilesHandler) AddProfile(ctx context.Context, in *Profile, out *empt
 
 func (h *profilesHandler) GetProfiles(ctx context.Context, in *emptypb.Empty, out *GetProfilesResponse) error {
 	return h.ProfilesHandler.GetProfiles(ctx, in, out)
+}
+
+func (h *profilesHandler) UpdateProfile(ctx context.Context, in *Profile, out *emptypb.Empty) error {
+	return h.ProfilesHandler.UpdateProfile(ctx, in, out)
 }
 
 func (h *profilesHandler) RemoveProfile(ctx context.Context, in *RemoveProfileRequest, out *emptypb.Empty) error {

@@ -11,6 +11,9 @@ service Profiles {
   // Получить все профили
   rpc GetProfiles(google.protobuf.Empty) returns (GetProfilesResponse);
 
+  // Обновить профиль
+  rpc UpdateProfile(Profile) returns (google.protobuf.Empty);
+
   // Удалить профиль
   rpc RemoveProfile(RemoveProfileRequest) returns (google.protobuf.Empty);
 }
@@ -30,37 +33,19 @@ message Profile {
   // Идентификатор профиля
   string id = 1;
 
-  // Настройки для транскодирования видео
-  Video video = 2;
+  // Настройки видео
+  bool videoMute = 2;
+  optional string videoCodec = 3;
+  optional uint32 videoWidth = 4;
+  optional uint32 videoHeight = 5;
+  optional uint32 videoBitrate = 6;
 
   // Настройки аудио
-  Audio audio = 3;
+  bool audioMute = 7;
+  optional string audioCodec = 8;
 
   // Флаг, что профиль зарезервирован в системе и его нельзя удалить
-  bool isReserved = 4;
-}
-
-message Video {
-  // Замьютить дорожку
-  bool mute = 1;
-
-  // Кодек
-  optional string codec = 2;
-
-  // Разрешение
-  optional uint32 width = 3;
-  optional uint32 height = 4;
-
-  // Битрейт
-  optional uint32 bitrate = 5;
-}
-
-message Audio {
-  // Замьютить дорожку
-  bool mute = 1;
-
-  // Кодек
-  optional string codec = 2;
+  bool isReserved = 9;
 }
 
 message GetProfilesResponse {
