@@ -76,11 +76,11 @@ message AddJobRequest {
 
 message AddJobResponse {
   // ID созданной задачи
-  string taskId = 1;
+  string jobId = 1;
 }
 
 message GetJobRequest {
-  string taskId = 1;
+  string jobId = 1;
 }
 
 message GetJobResponse {
@@ -99,5 +99,8 @@ message GetJobResponse {
 }
 
 message CancelJobRequest {
-  string taskId = 1;
+  string jobId = 1;
+
+  // Удалять ли файлы после завершения
+  bool removeFiles = 2;
 }
