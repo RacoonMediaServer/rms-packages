@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "video.proto";
+import "media.proto";
 import "google/protobuf/empty.proto";
 
 option go_package = "../rms-cctv";
@@ -97,7 +97,7 @@ message GetLiveUriRequest {
   uint32 cameraId = 1;
 
   // Протокол для формирования ссылки
-  video.Transport transport = 2;
+  media.Transport transport = 2;
 
   // Брать ли поток с наилучшим качеством
   bool mainProfile = 3;
@@ -113,7 +113,7 @@ message GetReplayUriRequest {
   uint32 cameraId = 1;
 
   // Протокол для формирования ссылки
-  video.Transport transport = 2;
+  media.Transport transport = 2;
 
   // С какого момента начать показывать запись
   optional uint64 timestamp = 3;

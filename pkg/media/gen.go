@@ -1,3 +1,3 @@
-package video
+package media
 
 //go:generate ./gen.sh

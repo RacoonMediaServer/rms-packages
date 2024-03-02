@@ -5,6 +5,7 @@ package rms_transcoder
 
 import (
 	fmt "fmt"
+	_ "github.com/RacoonMediaServer/rms-packages/pkg/media"
 	proto "google.golang.org/protobuf/proto"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	math "math"

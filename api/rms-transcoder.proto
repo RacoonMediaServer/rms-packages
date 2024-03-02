@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+import "media.proto";
 
 option go_package = "../rms-transcoder";
 
@@ -33,22 +34,14 @@ message Profile {
   // Идентификатор профиля
   string id = 1;
 
-  // Настройки видео
-  bool videoMute = 2;
-  optional string videoCodec = 3;
-  optional uint32 videoWidth = 4;
-  optional uint32 videoHeight = 5;
-  optional uint32 videoBitrate = 6;
-
-  // Настройки аудио
-  bool audioMute = 7;
-  optional string audioCodec = 8;
+  // Настройки транскодирования
+  media.TranscodingSettings settings = 2;
 
   // Флаг, что профиль зарезервирован в системе и его нельзя удалить
-  bool isReserved = 9;
+  bool isReserved = 3;
 
   // Флаг, что профиль доступен только для чтения
-  bool isReadOnly = 10;
+  bool isReadOnly = 4;
 }
 
 message GetProfilesResponse {
@@ -96,6 +89,9 @@ message GetJobResponse {
 
   // Путь к выходному файлу
   string destination = 2;
+
+  // Сколько выполнено работы (в процентах)
+  float progress = 3;
 }
 
 message CancelJobRequest {

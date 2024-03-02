@@ -1,0 +1,45 @@
+syntax = "proto3";
+package media;
+
+option go_package = "github.com/RacoonMediaServer/rms-packages/pkg/media";
+
+enum Transport {
+  RTSP = 0;
+  HTTP_HLS_MPEGTS = 1;
+  HTTP_HLS_MP4 = 2;
+  HTTP_HLS_ONE_CHUNK = 3;
+  HTTP_MP4 = 4;
+  HTTP_FLV = 5;
+  HTTP_MPEGTS = 6;
+  HTTP_DASH = 7;
+}
+
+message VideoTranscodingSettings {
+  // Название кодека в нотации FFmpeg
+  optional string codec = 1;
+
+  // Ширина
+  optional uint32 width = 2;
+
+  // Высота
+  optional uint32 height = 3;
+
+  // Битрейт
+  optional int64 bitrate = 4;
+}
+
+message AudioTranscodingSettings {
+  // Название кодека в нотации FFmpeg
+  optional string codec = 1;
+
+  // Битрейт
+  optional int64 bitrate = 2;
+}
+
+message TranscodingSettings {
+  // Настройки транскодирования видео
+  optional VideoTranscodingSettings video = 1;
+
+  // Настройки транскодирования аудио
+  optional AudioTranscodingSettings audio = 2;
+}

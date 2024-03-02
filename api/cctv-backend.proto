@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "video.proto";
+import "media.proto";
 import "google/protobuf/empty.proto";
 
 option go_package = "../cctv-backend";
@@ -67,7 +67,7 @@ message GetStreamUriRequest {
   string streamId = 1;
 
   // Транспорт для получения потока
-  optional video.Transport transport = 2;
+  optional media.Transport transport = 2;
 }
 
 message UriResponse {
@@ -75,7 +75,7 @@ message UriResponse {
   string uri = 1;
 
   // Реальный транспорт, для которого выдана ссылка
-  video.Transport transport = 2;
+  media.Transport transport = 2;
 }
 
 message AddRecordingRequest {
@@ -96,7 +96,7 @@ message GetRecordingUriRequest {
   string streamId = 1;
 
   // Транспорт для получения потока
-  optional video.Transport transport = 2;
+  optional media.Transport transport = 2;
 
   // С какого времени играть запись (Unix time, UTC)
   uint64 timestamp = 3;
