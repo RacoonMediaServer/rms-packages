@@ -65,6 +65,9 @@ message AddJobRequest {
 
   // Автоматически удалить задачу по завершении и отправить событие
   bool autoComplete = 4;
+
+  // Транскодировать только определенное количество секунд
+  optional uint32 duration = 5;
 }
 
 message AddJobResponse {
