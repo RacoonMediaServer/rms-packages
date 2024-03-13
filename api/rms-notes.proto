@@ -23,6 +23,9 @@ service RmsNotes {
   // Закрыть задачу
   rpc DoneTask(DoneTaskRequest) returns (google.protobuf.Empty);
 
+  // Отправить напоминания о текущих задачах
+  rpc SendTasksNotification(SendTasksNotificationRequest) returns (google.protobuf.Empty);
+
   // Получить настройки
   rpc GetSettings(google.protobuf.Empty) returns (NotesSettings);
 
@@ -101,6 +104,11 @@ message DoneTaskRequest {
 
   // ID пользователя Telegram
   int32 user = 2;
+}
+
+message SendTasksNotificationRequest {
+  // ID пользователя Telegram
+  int32 user = 1;
 }
 
 message NotesSettings {
