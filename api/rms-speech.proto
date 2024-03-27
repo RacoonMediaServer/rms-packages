@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../rms-speech";
+
+
+service Speech {
+  // Запустить процесс распознавания речи
+  rpc StartRecognition(StartRecognitionRequest) returns (StartRecognitionResponse);
+
+  // Получить статус задачи распознавания
+  rpc GetRecognitionStatus(GetRecognitionStatusRequest) returns (GetRecognitionStatusResponse);
+
+  // Отменить задачу
+  rpc StopRecognition(StopRecognitionRequest) returns (google.protobuf.Empty);
+}
+
+
+message StartRecognitionRequest {
+  // Аудио для распознавания
+  bytes data = 1;
+
+  // Content-Type
+  string contentType = 2;
+
+  // Таймаут длительности процесса
+  uint32 timeoutSec = 3;
+}
+
+message StartRecognitionResponse {
+  // ID созданной задачи
+  string jobId = 1;
+}
+
+message GetRecognitionStatusRequest {
+  string jobId = 1;
+}
+
+message GetRecognitionStatusResponse {
+  enum Status {
+    Pending = 0;
+    Processing = 1;
+    Failed = 3;
+    Done = 4;
+  }
+
+  // Состояние задачи
+  Status status = 1;
+
+  // Распознанный текст, если статус == Done
+  string recognizedText = 2;
+}
+
+message StopRecognitionRequest {
+  string jobId = 1;
+}
