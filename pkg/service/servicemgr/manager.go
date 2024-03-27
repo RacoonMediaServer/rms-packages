@@ -9,6 +9,7 @@ import (
 	rms_library "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-library"
 	rms_notes "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-notes"
 	rms_notifier "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-notifier"
+	rms_speech "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-speech"
 	rms_torrent "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-torrent"
 	rms_transcoder "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-transcoder"
 	rms_users "github.com/RacoonMediaServer/rms-packages/pkg/service/rms-users"
@@ -25,6 +26,7 @@ import (
 //go:generate ../rms-cctv/gen.sh
 //go:generate ../rms-backup/gen.sh
 //go:generate ../rms-transcoder/gen.sh
+//go:generate ../rms-speech/gen.sh
 //go:generate ../cctv-backend/gen.sh
 
 // ClientFactory can spawn microservices clients
@@ -106,4 +108,8 @@ func (f ServiceFactory) NewTranscoderProfiles() rms_transcoder.ProfilesService {
 
 func (f ServiceFactory) NewTranscoder() rms_transcoder.TranscoderService {
 	return rms_transcoder.NewTranscoderService("rms-transcoder", f.constructor.Client())
+}
+
+func (f ServiceFactory) NewSpeech() rms_speech.SpeechService {
+	return rms_speech.NewSpeechService("rms-speech", f.constructor.Client())
 }
