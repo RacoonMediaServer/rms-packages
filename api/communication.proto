@@ -46,6 +46,7 @@ message Attachment {
     Video = 2;
     Document = 3;
     Audio = 4;
+    Voice = 5;
   }
   Type type = 1;
   string mimeType = 2;
