@@ -24,6 +24,8 @@ message UserMessage {
   string text = 2;
   int32 user = 4;
   optional Attachment attachment = 5;
+  int32 messageID = 6;
+  int32 replyID = 7;
 }
 
 // Button defines Telegram chat button, associated with message
@@ -61,4 +63,5 @@ message BotMessage {
   KeyboardStyle keyboardStyle = 5;
   optional Attachment attachment = 6;
   int32 user = 7;
+  int32 replyID = 8;
 }
