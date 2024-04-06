@@ -29,25 +29,101 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Api Endpoints for RmsCctv service
+// Api Endpoints for Settings service
 
-func NewRmsCctvEndpoints() []*api.Endpoint {
+func NewSettingsEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
 }
 
-// Client API for RmsCctv service
+// Client API for Settings service
 
-type RmsCctvService interface {
+type SettingsService interface {
 	// получить настройки сервиса
 	GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*CctvSettings, error)
 	// установить настройки сервиса
 	SetSettings(ctx context.Context, in *CctvSettings, opts ...client.CallOption) (*emptypb.Empty, error)
+}
+
+type settingsService struct {
+	c    client.Client
+	name string
+}
+
+func NewSettingsService(name string, c client.Client) SettingsService {
+	return &settingsService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *settingsService) GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*CctvSettings, error) {
+	req := c.c.NewRequest(c.name, "Settings.GetSettings", in)
+	out := new(CctvSettings)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *settingsService) SetSettings(ctx context.Context, in *CctvSettings, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Settings.SetSettings", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Settings service
+
+type SettingsHandler interface {
+	// получить настройки сервиса
+	GetSettings(context.Context, *emptypb.Empty, *CctvSettings) error
+	// установить настройки сервиса
+	SetSettings(context.Context, *CctvSettings, *emptypb.Empty) error
+}
+
+func RegisterSettingsHandler(s server.Server, hdlr SettingsHandler, opts ...server.HandlerOption) error {
+	type settings interface {
+		GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error
+		SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error
+	}
+	type Settings struct {
+		settings
+	}
+	h := &settingsHandler{hdlr}
+	return s.Handle(s.NewHandler(&Settings{h}, opts...))
+}
+
+type settingsHandler struct {
+	SettingsHandler
+}
+
+func (h *settingsHandler) GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error {
+	return h.SettingsHandler.GetSettings(ctx, in, out)
+}
+
+func (h *settingsHandler) SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error {
+	return h.SettingsHandler.SetSettings(ctx, in, out)
+}
+
+// Api Endpoints for Cameras service
+
+func NewCamerasEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for Cameras service
+
+type CamerasService interface {
 	// получить список камер
 	GetCameras(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetCamerasResponse, error)
 	// Добавить камеру
 	AddCamera(ctx context.Context, in *Camera, opts ...client.CallOption) (*AddCameraResponse, error)
 	// Изменить настройки камеры
-	ModifyCamera(ctx context.Context, in *Camera, opts ...client.CallOption) (*emptypb.Empty, error)
+	ModifyCamera(ctx context.Context, in *ModifyCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Удалить камеру
 	DeleteCamera(ctx context.Context, in *DeleteCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Получить URI для проигрывания
@@ -58,40 +134,20 @@ type RmsCctvService interface {
 	GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error)
 }
 
-type rmsCctvService struct {
+type camerasService struct {
 	c    client.Client
 	name string
 }
 
-func NewRmsCctvService(name string, c client.Client) RmsCctvService {
-	return &rmsCctvService{
+func NewCamerasService(name string, c client.Client) CamerasService {
+	return &camerasService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *rmsCctvService) GetSettings(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*CctvSettings, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.GetSettings", in)
-	out := new(CctvSettings)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsCctvService) SetSettings(ctx context.Context, in *CctvSettings, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.SetSettings", in)
-	out := new(emptypb.Empty)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsCctvService) GetCameras(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetCamerasResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.GetCameras", in)
+func (c *camerasService) GetCameras(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetCamerasResponse, error) {
+	req := c.c.NewRequest(c.name, "Cameras.GetCameras", in)
 	out := new(GetCamerasResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -100,8 +156,8 @@ func (c *rmsCctvService) GetCameras(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
-func (c *rmsCctvService) AddCamera(ctx context.Context, in *Camera, opts ...client.CallOption) (*AddCameraResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.AddCamera", in)
+func (c *camerasService) AddCamera(ctx context.Context, in *Camera, opts ...client.CallOption) (*AddCameraResponse, error) {
+	req := c.c.NewRequest(c.name, "Cameras.AddCamera", in)
 	out := new(AddCameraResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -110,8 +166,8 @@ func (c *rmsCctvService) AddCamera(ctx context.Context, in *Camera, opts ...clie
 	return out, nil
 }
 
-func (c *rmsCctvService) ModifyCamera(ctx context.Context, in *Camera, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.ModifyCamera", in)
+func (c *camerasService) ModifyCamera(ctx context.Context, in *ModifyCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Cameras.ModifyCamera", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -120,8 +176,8 @@ func (c *rmsCctvService) ModifyCamera(ctx context.Context, in *Camera, opts ...c
 	return out, nil
 }
 
-func (c *rmsCctvService) DeleteCamera(ctx context.Context, in *DeleteCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.DeleteCamera", in)
+func (c *camerasService) DeleteCamera(ctx context.Context, in *DeleteCameraRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Cameras.DeleteCamera", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -130,8 +186,8 @@ func (c *rmsCctvService) DeleteCamera(ctx context.Context, in *DeleteCameraReque
 	return out, nil
 }
 
-func (c *rmsCctvService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.GetLiveUri", in)
+func (c *camerasService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
+	req := c.c.NewRequest(c.name, "Cameras.GetLiveUri", in)
 	out := new(GetUriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -140,8 +196,8 @@ func (c *rmsCctvService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, 
 	return out, nil
 }
 
-func (c *rmsCctvService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.GetReplayUri", in)
+func (c *camerasService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
+	req := c.c.NewRequest(c.name, "Cameras.GetReplayUri", in)
 	out := new(GetUriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -150,8 +206,8 @@ func (c *rmsCctvService) GetReplayUri(ctx context.Context, in *GetReplayUriReque
 	return out, nil
 }
 
-func (c *rmsCctvService) GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsCctv.GetSnapshot", in)
+func (c *camerasService) GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error) {
+	req := c.c.NewRequest(c.name, "Cameras.GetSnapshot", in)
 	out := new(GetSnapshotResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -160,19 +216,15 @@ func (c *rmsCctvService) GetSnapshot(ctx context.Context, in *GetSnapshotRequest
 	return out, nil
 }
 
-// Server API for RmsCctv service
+// Server API for Cameras service
 
-type RmsCctvHandler interface {
-	// получить настройки сервиса
-	GetSettings(context.Context, *emptypb.Empty, *CctvSettings) error
-	// установить настройки сервиса
-	SetSettings(context.Context, *CctvSettings, *emptypb.Empty) error
+type CamerasHandler interface {
 	// получить список камер
 	GetCameras(context.Context, *emptypb.Empty, *GetCamerasResponse) error
 	// Добавить камеру
 	AddCamera(context.Context, *Camera, *AddCameraResponse) error
 	// Изменить настройки камеры
-	ModifyCamera(context.Context, *Camera, *emptypb.Empty) error
+	ModifyCamera(context.Context, *ModifyCameraRequest, *emptypb.Empty) error
 	// Удалить камеру
 	DeleteCamera(context.Context, *DeleteCameraRequest, *emptypb.Empty) error
 	// Получить URI для проигрывания
@@ -183,61 +235,150 @@ type RmsCctvHandler interface {
 	GetSnapshot(context.Context, *GetSnapshotRequest, *GetSnapshotResponse) error
 }
 
-func RegisterRmsCctvHandler(s server.Server, hdlr RmsCctvHandler, opts ...server.HandlerOption) error {
-	type rmsCctv interface {
-		GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error
-		SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error
+func RegisterCamerasHandler(s server.Server, hdlr CamerasHandler, opts ...server.HandlerOption) error {
+	type cameras interface {
 		GetCameras(ctx context.Context, in *emptypb.Empty, out *GetCamerasResponse) error
 		AddCamera(ctx context.Context, in *Camera, out *AddCameraResponse) error
-		ModifyCamera(ctx context.Context, in *Camera, out *emptypb.Empty) error
+		ModifyCamera(ctx context.Context, in *ModifyCameraRequest, out *emptypb.Empty) error
 		DeleteCamera(ctx context.Context, in *DeleteCameraRequest, out *emptypb.Empty) error
 		GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error
 		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error
 		GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error
 	}
-	type RmsCctv struct {
-		rmsCctv
+	type Cameras struct {
+		cameras
 	}
-	h := &rmsCctvHandler{hdlr}
-	return s.Handle(s.NewHandler(&RmsCctv{h}, opts...))
+	h := &camerasHandler{hdlr}
+	return s.Handle(s.NewHandler(&Cameras{h}, opts...))
 }
 
-type rmsCctvHandler struct {
-	RmsCctvHandler
+type camerasHandler struct {
+	CamerasHandler
 }
 
-func (h *rmsCctvHandler) GetSettings(ctx context.Context, in *emptypb.Empty, out *CctvSettings) error {
-	return h.RmsCctvHandler.GetSettings(ctx, in, out)
+func (h *camerasHandler) GetCameras(ctx context.Context, in *emptypb.Empty, out *GetCamerasResponse) error {
+	return h.CamerasHandler.GetCameras(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) SetSettings(ctx context.Context, in *CctvSettings, out *emptypb.Empty) error {
-	return h.RmsCctvHandler.SetSettings(ctx, in, out)
+func (h *camerasHandler) AddCamera(ctx context.Context, in *Camera, out *AddCameraResponse) error {
+	return h.CamerasHandler.AddCamera(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) GetCameras(ctx context.Context, in *emptypb.Empty, out *GetCamerasResponse) error {
-	return h.RmsCctvHandler.GetCameras(ctx, in, out)
+func (h *camerasHandler) ModifyCamera(ctx context.Context, in *ModifyCameraRequest, out *emptypb.Empty) error {
+	return h.CamerasHandler.ModifyCamera(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) AddCamera(ctx context.Context, in *Camera, out *AddCameraResponse) error {
-	return h.RmsCctvHandler.AddCamera(ctx, in, out)
+func (h *camerasHandler) DeleteCamera(ctx context.Context, in *DeleteCameraRequest, out *emptypb.Empty) error {
+	return h.CamerasHandler.DeleteCamera(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) ModifyCamera(ctx context.Context, in *Camera, out *emptypb.Empty) error {
-	return h.RmsCctvHandler.ModifyCamera(ctx, in, out)
+func (h *camerasHandler) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error {
+	return h.CamerasHandler.GetLiveUri(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) DeleteCamera(ctx context.Context, in *DeleteCameraRequest, out *emptypb.Empty) error {
-	return h.RmsCctvHandler.DeleteCamera(ctx, in, out)
+func (h *camerasHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error {
+	return h.CamerasHandler.GetReplayUri(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error {
-	return h.RmsCctvHandler.GetLiveUri(ctx, in, out)
+func (h *camerasHandler) GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error {
+	return h.CamerasHandler.GetSnapshot(ctx, in, out)
 }
 
-func (h *rmsCctvHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error {
-	return h.RmsCctvHandler.GetReplayUri(ctx, in, out)
+// Api Endpoints for Schedules service
+
+func NewSchedulesEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
 }
 
-func (h *rmsCctvHandler) GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error {
-	return h.RmsCctvHandler.GetSnapshot(ctx, in, out)
+// Client API for Schedules service
+
+type SchedulesService interface {
+	// Получить список расписаний
+	GetSchedulesList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetScheduleListResponse, error)
+	// Создать расписание
+	AddSchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*AddScheduleResponse, error)
+	// Удалить расписание
+	DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+}
+
+type schedulesService struct {
+	c    client.Client
+	name string
+}
+
+func NewSchedulesService(name string, c client.Client) SchedulesService {
+	return &schedulesService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *schedulesService) GetSchedulesList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetScheduleListResponse, error) {
+	req := c.c.NewRequest(c.name, "Schedules.GetSchedulesList", in)
+	out := new(GetScheduleListResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulesService) AddSchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*AddScheduleResponse, error) {
+	req := c.c.NewRequest(c.name, "Schedules.AddSchedule", in)
+	out := new(AddScheduleResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulesService) DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Schedules.DeleteSchedule", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Schedules service
+
+type SchedulesHandler interface {
+	// Получить список расписаний
+	GetSchedulesList(context.Context, *emptypb.Empty, *GetScheduleListResponse) error
+	// Создать расписание
+	AddSchedule(context.Context, *Schedule, *AddScheduleResponse) error
+	// Удалить расписание
+	DeleteSchedule(context.Context, *DeleteScheduleRequest, *emptypb.Empty) error
+}
+
+func RegisterSchedulesHandler(s server.Server, hdlr SchedulesHandler, opts ...server.HandlerOption) error {
+	type schedules interface {
+		GetSchedulesList(ctx context.Context, in *emptypb.Empty, out *GetScheduleListResponse) error
+		AddSchedule(ctx context.Context, in *Schedule, out *AddScheduleResponse) error
+		DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, out *emptypb.Empty) error
+	}
+	type Schedules struct {
+		schedules
+	}
+	h := &schedulesHandler{hdlr}
+	return s.Handle(s.NewHandler(&Schedules{h}, opts...))
+}
+
+type schedulesHandler struct {
+	SchedulesHandler
+}
+
+func (h *schedulesHandler) GetSchedulesList(ctx context.Context, in *emptypb.Empty, out *GetScheduleListResponse) error {
+	return h.SchedulesHandler.GetSchedulesList(ctx, in, out)
+}
+
+func (h *schedulesHandler) AddSchedule(ctx context.Context, in *Schedule, out *AddScheduleResponse) error {
+	return h.SchedulesHandler.AddSchedule(ctx, in, out)
+}
+
+func (h *schedulesHandler) DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, out *emptypb.Empty) error {
+	return h.SchedulesHandler.DeleteSchedule(ctx, in, out)
 }

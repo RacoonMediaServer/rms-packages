@@ -5,13 +5,15 @@ import "google/protobuf/empty.proto";
 
 option go_package = "../rms-cctv";
 
-service RmsCctv {
+service Settings {
   // получить настройки сервиса
   rpc GetSettings(google.protobuf.Empty) returns (CctvSettings);
 
   // установить настройки сервиса
   rpc SetSettings(CctvSettings) returns (google.protobuf.Empty);
+}
 
+service Cameras {
   // получить список камер
   rpc GetCameras(google.protobuf.Empty) returns(GetCamerasResponse);
 
@@ -19,7 +21,7 @@ service RmsCctv {
   rpc AddCamera(Camera) returns(AddCameraResponse);
 
   // Изменить настройки камеры
-  rpc ModifyCamera(Camera) returns(google.protobuf.Empty);
+  rpc ModifyCamera(ModifyCameraRequest) returns(google.protobuf.Empty);
 
   // Удалить камеру
   rpc DeleteCamera(DeleteCameraRequest) returns(google.protobuf.Empty);
@@ -32,6 +34,17 @@ service RmsCctv {
 
   // Получить изображение с камеры
   rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
+}
+
+service Schedules {
+  // Получить список расписаний
+  rpc GetSchedulesList(google.protobuf.Empty) returns (GetScheduleListResponse);
+
+  // Создать расписание
+  rpc AddSchedule(Schedule) returns (AddScheduleResponse);
+
+  // Удалить расписание
+  rpc DeleteSchedule(DeleteScheduleRequest) returns (google.protobuf.Empty);
 }
 
 message CctvSettings {
@@ -49,6 +62,8 @@ enum RecordingMode {
   ByEvents = 2;
   // Пишем с прореживанием, когда сработало событие - все кадры
   Optimal = 3;
+  // Пишем в соответсвии с расписанием
+  BySchedule = 4;
 }
 
 message Camera {
@@ -73,7 +88,7 @@ message Camera {
   // Режим записи
   RecordingMode mode = 7;
 
-  // Расписание уведомлений (в формате iCal)
+  // Расписание уведомлений (идентификатор)
   string schedule = 8;
 }
 
@@ -127,4 +142,43 @@ message GetSnapshotRequest {
 message GetSnapshotResponse {
   // JPEG-изображение
   bytes snapshot = 1;
+}
+
+message ModifyCameraRequest {
+  // Внутренний идентификатор камеры
+  uint32 id = 1;
+
+  // Сколько дней хранить архив
+  uint32 keepDays = 2;
+
+  // Режим записи
+  RecordingMode mode = 3;
+
+  // Расписание уведомлений (идентификатор)
+  string schedule = 4;
+}
+
+message Schedule {
+  // Идентификатор расписания
+  string id = 1;
+
+  // Человеко-читаемое название
+  string name = 2;
+
+  // Итервалы расписания в формате JSON
+  string content = 3;
+}
+
+message AddScheduleResponse {
+  // Идентификатор расписания
+  string id = 1;
+}
+
+message GetScheduleListResponse {
+  repeated Schedule result = 1;
+}
+
+message DeleteScheduleRequest {
+  // Идентификатор расписания
+  string id = 1;
 }
