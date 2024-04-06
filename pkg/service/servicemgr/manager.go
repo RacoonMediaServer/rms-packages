@@ -80,9 +80,19 @@ func (f ServiceFactory) NewNotes() rms_notes.RmsNotesService {
 	return rms_notes.NewRmsNotesService("rms-notes", f.constructor.Client())
 }
 
-// NewCctv creates connection to rms-cctv service
-func (f ServiceFactory) NewCctv() rms_cctv.RmsCctvService {
-	return rms_cctv.NewRmsCctvService("rms-cctv", f.constructor.Client())
+// NewCctvCameras creates connection to rms-cctv cameras service
+func (f ServiceFactory) NewCctvCameras() rms_cctv.CamerasService {
+	return rms_cctv.NewCamerasService("rms-cctv", f.constructor.Client())
+}
+
+// NewCctvSettings creates connection to rms-cctv settings service
+func (f ServiceFactory) NewCctvSettings() rms_cctv.SettingsService {
+	return rms_cctv.NewSettingsService("rms-cctv", f.constructor.Client())
+}
+
+// NewCctvSchedules creates connection to rms-cctv schedules service
+func (f ServiceFactory) NewCctvSchedules() rms_cctv.SchedulesService {
+	return rms_cctv.NewSchedulesService("rms-cctv", f.constructor.Client())
 }
 
 // NewBackup creates connection to rms-backup service
