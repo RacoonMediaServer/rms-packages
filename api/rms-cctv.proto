@@ -148,14 +148,17 @@ message ModifyCameraRequest {
   // Внутренний идентификатор камеры
   uint32 id = 1;
 
+  // Имя камеры
+  string name = 2;
+
   // Сколько дней хранить архив
-  uint32 keepDays = 2;
+  uint32 keepDays = 3;
 
   // Режим записи
-  RecordingMode mode = 3;
+  RecordingMode mode = 4;
 
   // Расписание уведомлений (идентификатор)
-  string schedule = 4;
+  string schedule = 5;
 }
 
 message Schedule {
