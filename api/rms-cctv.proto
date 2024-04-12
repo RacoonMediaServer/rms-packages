@@ -40,8 +40,14 @@ service Schedules {
   // Получить список расписаний
   rpc GetSchedulesList(google.protobuf.Empty) returns (GetScheduleListResponse);
 
+  // Получить инфу о расписании
+  rpc GetSchedule(GetScheduleRequest) returns (Schedule);
+
   // Создать расписание
   rpc AddSchedule(Schedule) returns (AddScheduleResponse);
+
+  // Изменить расписание
+  rpc ModifySchedule(Schedule) returns (google.protobuf.Empty);
 
   // Удалить расписание
   rpc DeleteSchedule(DeleteScheduleRequest) returns (google.protobuf.Empty);
@@ -179,6 +185,11 @@ message AddScheduleResponse {
 
 message GetScheduleListResponse {
   repeated Schedule result = 1;
+}
+
+message GetScheduleRequest {
+  // Идентификатор расписания
+  string id = 1;
 }
 
 message DeleteScheduleRequest {

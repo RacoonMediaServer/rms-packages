@@ -295,8 +295,12 @@ func NewSchedulesEndpoints() []*api.Endpoint {
 type SchedulesService interface {
 	// Получить список расписаний
 	GetSchedulesList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetScheduleListResponse, error)
+	// Получить инфу о расписании
+	GetSchedule(ctx context.Context, in *GetScheduleRequest, opts ...client.CallOption) (*Schedule, error)
 	// Создать расписание
 	AddSchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*AddScheduleResponse, error)
+	// Изменить расписание
+	ModifySchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Удалить расписание
 	DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
@@ -323,9 +327,29 @@ func (c *schedulesService) GetSchedulesList(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
+func (c *schedulesService) GetSchedule(ctx context.Context, in *GetScheduleRequest, opts ...client.CallOption) (*Schedule, error) {
+	req := c.c.NewRequest(c.name, "Schedules.GetSchedule", in)
+	out := new(Schedule)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *schedulesService) AddSchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*AddScheduleResponse, error) {
 	req := c.c.NewRequest(c.name, "Schedules.AddSchedule", in)
 	out := new(AddScheduleResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulesService) ModifySchedule(ctx context.Context, in *Schedule, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Schedules.ModifySchedule", in)
+	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -348,8 +372,12 @@ func (c *schedulesService) DeleteSchedule(ctx context.Context, in *DeleteSchedul
 type SchedulesHandler interface {
 	// Получить список расписаний
 	GetSchedulesList(context.Context, *emptypb.Empty, *GetScheduleListResponse) error
+	// Получить инфу о расписании
+	GetSchedule(context.Context, *GetScheduleRequest, *Schedule) error
 	// Создать расписание
 	AddSchedule(context.Context, *Schedule, *AddScheduleResponse) error
+	// Изменить расписание
+	ModifySchedule(context.Context, *Schedule, *emptypb.Empty) error
 	// Удалить расписание
 	DeleteSchedule(context.Context, *DeleteScheduleRequest, *emptypb.Empty) error
 }
@@ -357,7 +385,9 @@ type SchedulesHandler interface {
 func RegisterSchedulesHandler(s server.Server, hdlr SchedulesHandler, opts ...server.HandlerOption) error {
 	type schedules interface {
 		GetSchedulesList(ctx context.Context, in *emptypb.Empty, out *GetScheduleListResponse) error
+		GetSchedule(ctx context.Context, in *GetScheduleRequest, out *Schedule) error
 		AddSchedule(ctx context.Context, in *Schedule, out *AddScheduleResponse) error
+		ModifySchedule(ctx context.Context, in *Schedule, out *emptypb.Empty) error
 		DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, out *emptypb.Empty) error
 	}
 	type Schedules struct {
@@ -375,8 +405,16 @@ func (h *schedulesHandler) GetSchedulesList(ctx context.Context, in *emptypb.Emp
 	return h.SchedulesHandler.GetSchedulesList(ctx, in, out)
 }
 
+func (h *schedulesHandler) GetSchedule(ctx context.Context, in *GetScheduleRequest, out *Schedule) error {
+	return h.SchedulesHandler.GetSchedule(ctx, in, out)
+}
+
 func (h *schedulesHandler) AddSchedule(ctx context.Context, in *Schedule, out *AddScheduleResponse) error {
 	return h.SchedulesHandler.AddSchedule(ctx, in, out)
+}
+
+func (h *schedulesHandler) ModifySchedule(ctx context.Context, in *Schedule, out *emptypb.Empty) error {
+	return h.SchedulesHandler.ModifySchedule(ctx, in, out)
 }
 
 func (h *schedulesHandler) DeleteSchedule(ctx context.Context, in *DeleteScheduleRequest, out *emptypb.Empty) error {
