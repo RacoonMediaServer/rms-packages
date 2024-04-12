@@ -1,0 +1,60 @@
+syntax = "proto3";
+package communication;
+
+option go_package = "github.com/RacoonMediaServer/rms-packages/pkg/health";
+
+message Failure {
+  enum Code {
+    ServiceNotStarted = 0;
+    ServiceNotAccessible = 1;
+    LiveStreamIsNotAccessible = 2;
+    LiveStreamPlayFailure = 3;
+    RecordingUnexpectedStopped = 4;
+    RecordingPlaybackFailure = 5;
+
+    Unknown = 255;
+  }
+
+  enum Severity {
+    NotImportant = 0;
+    Tolerance = 1;
+    Critical = 2;
+  }
+
+  // Код ошибки
+  Code code = 1;
+
+  // Критичность ошибки
+  Severity severity = 2;
+
+  // Сервис, в котором обнаружена проблема
+  string service = 3;
+
+  // Текстовое представление ошибки
+  string text = 4;
+
+  // Идентификатор сущности, с которой связана ошибка
+  optional string subjectId = 5;
+
+  // Человеко-читаемое название сущности
+  optional string subjectName = 6;
+
+  // Детали для диагностики
+  map<string, string> details = 7;
+}
+
+message Report {
+  enum Status {
+    Ok = 0;
+    Warning = 1;
+    Critical = 2;
+  }
+  // Когда была проведена проверка
+  uint64 timestamp = 1;
+
+  // Результат проверки
+  Status status = 2;
+
+  // найденные сбои
+  repeated Failure failures = 3;
+}
