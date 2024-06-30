@@ -34,6 +34,9 @@ service Cameras {
 
   // Получить изображение с камеры
   rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
+
+  // Установить режим "никого нет дома"
+  rpc SetNobodyAtHomeMode(SetNobodyAtHomeModeRequest) returns (google.protobuf.Empty);
 }
 
 service Schedules {
@@ -165,6 +168,11 @@ message ModifyCameraRequest {
 
   // Расписание уведомлений (идентификатор)
   string schedule = 5;
+}
+
+message SetNobodyAtHomeModeRequest {
+  // Активен ли режим
+  bool active = 1;
 }
 
 message Schedule {

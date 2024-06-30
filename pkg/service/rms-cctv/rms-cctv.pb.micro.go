@@ -132,6 +132,8 @@ type CamerasService interface {
 	GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
 	// Получить изображение с камеры
 	GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error)
+	// Установить режим "никого нет дома"
+	SetNobodyAtHomeMode(ctx context.Context, in *SetNobodyAtHomeModeRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
 
 type camerasService struct {
@@ -216,6 +218,16 @@ func (c *camerasService) GetSnapshot(ctx context.Context, in *GetSnapshotRequest
 	return out, nil
 }
 
+func (c *camerasService) SetNobodyAtHomeMode(ctx context.Context, in *SetNobodyAtHomeModeRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Cameras.SetNobodyAtHomeMode", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Cameras service
 
 type CamerasHandler interface {
@@ -233,6 +245,8 @@ type CamerasHandler interface {
 	GetReplayUri(context.Context, *GetReplayUriRequest, *GetUriResponse) error
 	// Получить изображение с камеры
 	GetSnapshot(context.Context, *GetSnapshotRequest, *GetSnapshotResponse) error
+	// Установить режим "никого нет дома"
+	SetNobodyAtHomeMode(context.Context, *SetNobodyAtHomeModeRequest, *emptypb.Empty) error
 }
 
 func RegisterCamerasHandler(s server.Server, hdlr CamerasHandler, opts ...server.HandlerOption) error {
@@ -244,6 +258,7 @@ func RegisterCamerasHandler(s server.Server, hdlr CamerasHandler, opts ...server
 		GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error
 		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error
 		GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error
+		SetNobodyAtHomeMode(ctx context.Context, in *SetNobodyAtHomeModeRequest, out *emptypb.Empty) error
 	}
 	type Cameras struct {
 		cameras
@@ -282,6 +297,10 @@ func (h *camerasHandler) GetReplayUri(ctx context.Context, in *GetReplayUriReque
 
 func (h *camerasHandler) GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error {
 	return h.CamerasHandler.GetSnapshot(ctx, in, out)
+}
+
+func (h *camerasHandler) SetNobodyAtHomeMode(ctx context.Context, in *SetNobodyAtHomeModeRequest, out *emptypb.Empty) error {
+	return h.CamerasHandler.SetNobodyAtHomeMode(ctx, in, out)
 }
 
 // Api Endpoints for Schedules service
