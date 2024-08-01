@@ -1,8 +1,9 @@
 package schedule
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -86,6 +87,30 @@ func TestSchedule_IsActive(t *testing.T) {
 
 	now = mkTime(10, 59)
 	assert.True(t, s.IsActive(now))
+
+	now = mkTime(11, 00)
+	assert.True(t, s.IsActive(now))
+
+	now = mkTime(11, 01)
+	assert.False(t, s.IsActive(now))
+
+	r = Representation{
+		Intervals: []Interval{
+			{
+				Begin: TimePoint{23, 00},
+				End:   TimePoint{23, 59},
+			},
+		},
+	}
+
+	s, err = New(r)
+	assert.NoError(t, err)
+
+	now = mkTime(23, 59)
+	assert.True(t, s.IsActive(now))
+
+	now = mkTime(00, 00)
+	assert.False(t, s.IsActive(now))
 }
 
 func TestSchedule_Empty(t *testing.T) {

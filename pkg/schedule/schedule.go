@@ -31,7 +31,7 @@ func New(r Representation) (*Schedule, error) {
 
 	for _, i := range r.Intervals {
 		t1 := mkTime(i.Begin.Hours, i.Begin.Minutes)
-		t2 := mkTime(i.End.Hours, i.End.Minutes)
+		t2 := mkTime(i.End.Hours, i.End.Minutes+1)
 		span, err := interval.New(t1, t2)
 		if err != nil {
 			return nil, err
