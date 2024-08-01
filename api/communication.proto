@@ -64,4 +64,10 @@ message BotMessage {
   optional Attachment attachment = 6;
   int32 user = 7;
   int32 replyID = 8;
+  enum PinMode {
+    None = 0;
+    ThisMessage = 1;
+    Drop = 2;
+  }
+  PinMode pin = 9;
 }
