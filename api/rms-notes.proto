@@ -20,6 +20,9 @@ service RmsNotes {
   // Отложить задачу
   rpc SnoozeTask(SnoozeTaskRequest) returns (google.protobuf.Empty);
 
+  // Удалить задачу
+  rpc RemoveTask(RemoveTaskRequest) returns (google.protobuf.Empty);
+
   // Закрыть задачу
   rpc DoneTask(DoneTaskRequest) returns (google.protobuf.Empty);
 
@@ -96,6 +99,14 @@ message SnoozeTaskRequest {
 
   // ID пользователя Telegram
   int32 user = 3;
+}
+
+message RemoveTaskRequest {
+  // ID задачи
+  string id = 1;
+
+  // ID пользователя Telegram
+  int32 user = 2;
 }
 
 message DoneTaskRequest {

@@ -47,6 +47,8 @@ type RmsNotesService interface {
 	AddTask(ctx context.Context, in *AddTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Отложить задачу
 	SnoozeTask(ctx context.Context, in *SnoozeTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// Удалить задачу
+	RemoveTask(ctx context.Context, in *RemoveTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Закрыть задачу
 	DoneTask(ctx context.Context, in *DoneTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// Отправить напоминания о текущих задачах
@@ -119,6 +121,16 @@ func (c *rmsNotesService) SnoozeTask(ctx context.Context, in *SnoozeTaskRequest,
 	return out, nil
 }
 
+func (c *rmsNotesService) RemoveTask(ctx context.Context, in *RemoveTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsNotes.RemoveTask", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rmsNotesService) DoneTask(ctx context.Context, in *DoneTaskRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
 	req := c.c.NewRequest(c.name, "RmsNotes.DoneTask", in)
 	out := new(emptypb.Empty)
@@ -172,6 +184,8 @@ type RmsNotesHandler interface {
 	AddTask(context.Context, *AddTaskRequest, *emptypb.Empty) error
 	// Отложить задачу
 	SnoozeTask(context.Context, *SnoozeTaskRequest, *emptypb.Empty) error
+	// Удалить задачу
+	RemoveTask(context.Context, *RemoveTaskRequest, *emptypb.Empty) error
 	// Закрыть задачу
 	DoneTask(context.Context, *DoneTaskRequest, *emptypb.Empty) error
 	// Отправить напоминания о текущих задачах
@@ -189,6 +203,7 @@ func RegisterRmsNotesHandler(s server.Server, hdlr RmsNotesHandler, opts ...serv
 		AddNote(ctx context.Context, in *AddNoteRequest, out *emptypb.Empty) error
 		AddTask(ctx context.Context, in *AddTaskRequest, out *emptypb.Empty) error
 		SnoozeTask(ctx context.Context, in *SnoozeTaskRequest, out *emptypb.Empty) error
+		RemoveTask(ctx context.Context, in *RemoveTaskRequest, out *emptypb.Empty) error
 		DoneTask(ctx context.Context, in *DoneTaskRequest, out *emptypb.Empty) error
 		SendTasksNotification(ctx context.Context, in *SendTasksNotificationRequest, out *emptypb.Empty) error
 		GetSettings(ctx context.Context, in *emptypb.Empty, out *NotesSettings) error
@@ -223,6 +238,10 @@ func (h *rmsNotesHandler) AddTask(ctx context.Context, in *AddTaskRequest, out *
 
 func (h *rmsNotesHandler) SnoozeTask(ctx context.Context, in *SnoozeTaskRequest, out *emptypb.Empty) error {
 	return h.RmsNotesHandler.SnoozeTask(ctx, in, out)
+}
+
+func (h *rmsNotesHandler) RemoveTask(ctx context.Context, in *RemoveTaskRequest, out *emptypb.Empty) error {
+	return h.RmsNotesHandler.RemoveTask(ctx, in, out)
 }
 
 func (h *rmsNotesHandler) DoneTask(ctx context.Context, in *DoneTaskRequest, out *emptypb.Empty) error {
