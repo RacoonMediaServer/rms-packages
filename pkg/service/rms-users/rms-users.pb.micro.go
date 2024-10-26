@@ -37,8 +37,8 @@ func NewRmsUsersEndpoints() []*api.Endpoint {
 // Client API for RmsUsers service
 
 type RmsUsersService interface {
-	// Получить права доступа с указанным API-токеном
-	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...client.CallOption) (*GetPermissionsResponse, error)
+	// Проверить наличие прав у пользователя
+	CheckPermissions(ctx context.Context, in *CheckPermissionsRequest, opts ...client.CallOption) (*CheckPermissionsResponse, error)
 	// Регистрация нового пользователя
 	RegisterUser(ctx context.Context, in *User, opts ...client.CallOption) (*RegisterUserResponse, error)
 	// Получить аккаунт пользователя по его идентификатору в Telegram
@@ -59,9 +59,9 @@ func NewRmsUsersService(name string, c client.Client) RmsUsersService {
 	}
 }
 
-func (c *rmsUsersService) GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...client.CallOption) (*GetPermissionsResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsUsers.GetPermissions", in)
-	out := new(GetPermissionsResponse)
+func (c *rmsUsersService) CheckPermissions(ctx context.Context, in *CheckPermissionsRequest, opts ...client.CallOption) (*CheckPermissionsResponse, error) {
+	req := c.c.NewRequest(c.name, "RmsUsers.CheckPermissions", in)
+	out := new(CheckPermissionsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,8 +102,8 @@ func (c *rmsUsersService) GetAdminUsers(ctx context.Context, in *emptypb.Empty, 
 // Server API for RmsUsers service
 
 type RmsUsersHandler interface {
-	// Получить права доступа с указанным API-токеном
-	GetPermissions(context.Context, *GetPermissionsRequest, *GetPermissionsResponse) error
+	// Проверить наличие прав у пользователя
+	CheckPermissions(context.Context, *CheckPermissionsRequest, *CheckPermissionsResponse) error
 	// Регистрация нового пользователя
 	RegisterUser(context.Context, *User, *RegisterUserResponse) error
 	// Получить аккаунт пользователя по его идентификатору в Telegram
@@ -114,7 +114,7 @@ type RmsUsersHandler interface {
 
 func RegisterRmsUsersHandler(s server.Server, hdlr RmsUsersHandler, opts ...server.HandlerOption) error {
 	type rmsUsers interface {
-		GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error
+		CheckPermissions(ctx context.Context, in *CheckPermissionsRequest, out *CheckPermissionsResponse) error
 		RegisterUser(ctx context.Context, in *User, out *RegisterUserResponse) error
 		GetUserByTelegramId(ctx context.Context, in *GetUserByTelegramIdRequest, out *User) error
 		GetAdminUsers(ctx context.Context, in *emptypb.Empty, out *GetAdminUsersResponse) error
@@ -130,8 +130,8 @@ type rmsUsersHandler struct {
 	RmsUsersHandler
 }
 
-func (h *rmsUsersHandler) GetPermissions(ctx context.Context, in *GetPermissionsRequest, out *GetPermissionsResponse) error {
-	return h.RmsUsersHandler.GetPermissions(ctx, in, out)
+func (h *rmsUsersHandler) CheckPermissions(ctx context.Context, in *CheckPermissionsRequest, out *CheckPermissionsResponse) error {
+	return h.RmsUsersHandler.CheckPermissions(ctx, in, out)
 }
 
 func (h *rmsUsersHandler) RegisterUser(ctx context.Context, in *User, out *RegisterUserResponse) error {

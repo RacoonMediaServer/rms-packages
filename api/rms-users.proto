@@ -5,8 +5,8 @@ option go_package = "../rms-users";
 import "google/protobuf/empty.proto";
 
 service RmsUsers {
-  // Получить права доступа с указанным API-токеном
-  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  // Проверить наличие прав у пользователя
+  rpc CheckPermissions(CheckPermissionsRequest) returns (CheckPermissionsResponse);
 
   // Регистрация нового пользователя
   rpc RegisterUser(User) returns (RegisterUserResponse);
@@ -49,13 +49,20 @@ message User {
   repeated Permissions perms = 4;
 }
 
-message GetPermissionsRequest {
+message CheckPermissionsRequest {
   // содержимое X-Token
   string token = 1;
+
+  // Запрошенные привелегии
+  repeated Permissions perms = 2;
 }
 
-message GetPermissionsResponse {
-  repeated Permissions perms = 1;
+message CheckPermissionsResponse {
+  // Доступ разрешен
+  bool allowed = 1;
+
+  // Идентификатор пользователя
+  string userId = 2;
 }
 
 message RegisterUserResponse {
