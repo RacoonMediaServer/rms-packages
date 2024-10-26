@@ -39,8 +39,8 @@ message User {
   // имя пользователя
   string name = 1;
 
-  // API-токен, связанный с данным пользователем
-  optional string token = 2;
+  // ID пользователя
+  optional string id = 2;
 
   // ID пользователя Telegram
   optional int32 telegramUserID = 3;
@@ -66,7 +66,11 @@ message CheckPermissionsResponse {
 }
 
 message RegisterUserResponse {
-  string token = 1;
+  // ID пользователя
+  string userId = 1;
+
+  // API токен для доступа
+  string token = 2;
 }
 
 message GetUserByTelegramIdRequest {
