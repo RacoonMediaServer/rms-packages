@@ -16,6 +16,12 @@ enum MessageType {
 
   // Отсоединить пользователя от текущего устройства
   UnlinkUser = 3;
+
+  // Запрос на само-регистрацию клиента через бот
+  SelfRegistrationRequest = 4;
+
+  // Ключ для доступа после саморегистрации
+  DemoApiKey = 5;
 }
 
 // Telegram message from user to device
