@@ -47,14 +47,20 @@ message User {
 
   // права пользователя в системе
   repeated Permissions perms = 4;
+
+  // домен безопасности (каждый пользователь может относиться только к одному домену)
+  optional string domain = 5;
 }
 
 message CheckPermissionsRequest {
   // содержимое X-Token
   string token = 1;
 
-  // Запрошенные привелегии
+  // запрошенные привелегии
   repeated Permissions perms = 2;
+
+  // домен безопасности (принадлежит ли пользователь указанному домену?)
+  optional string domain = 3;
 }
 
 message CheckPermissionsResponse {
