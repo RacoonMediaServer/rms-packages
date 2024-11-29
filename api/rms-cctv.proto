@@ -30,7 +30,7 @@ service Cameras {
   rpc GetLiveUri(GetLiveUriRequest) returns(GetUriResponse);
 
   // Получить URI для проигрывания архива
-  rpc GetReplayUri(GetReplayUriRequest) returns (GetUriResponse);
+  rpc GetReplayUri(GetReplayUriRequest) returns (GetReplayUriResponse);
 
   // Получить изображение с камеры
   rpc GetSnapshot(GetSnapshotRequest) returns (GetSnapshotResponse);
@@ -141,6 +141,14 @@ message GetReplayUriRequest {
 
   // С какого момента начать показывать запись
   optional uint64 timestamp = 3;
+}
+
+message GetReplayUriResponse {
+  // URI для воспроизведения
+  string uri = 1;
+
+  // Смещение от начала фрагмента на запрошенное время
+  uint32 offsetSec = 2;
 }
 
 message GetSnapshotRequest {

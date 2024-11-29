@@ -129,7 +129,7 @@ type CamerasService interface {
 	// Получить URI для проигрывания
 	GetLiveUri(ctx context.Context, in *GetLiveUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
 	// Получить URI для проигрывания архива
-	GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error)
+	GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetReplayUriResponse, error)
 	// Получить изображение с камеры
 	GetSnapshot(ctx context.Context, in *GetSnapshotRequest, opts ...client.CallOption) (*GetSnapshotResponse, error)
 	// Установить режим "никого нет дома"
@@ -198,9 +198,9 @@ func (c *camerasService) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, 
 	return out, nil
 }
 
-func (c *camerasService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetUriResponse, error) {
+func (c *camerasService) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, opts ...client.CallOption) (*GetReplayUriResponse, error) {
 	req := c.c.NewRequest(c.name, "Cameras.GetReplayUri", in)
-	out := new(GetUriResponse)
+	out := new(GetReplayUriResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -242,7 +242,7 @@ type CamerasHandler interface {
 	// Получить URI для проигрывания
 	GetLiveUri(context.Context, *GetLiveUriRequest, *GetUriResponse) error
 	// Получить URI для проигрывания архива
-	GetReplayUri(context.Context, *GetReplayUriRequest, *GetUriResponse) error
+	GetReplayUri(context.Context, *GetReplayUriRequest, *GetReplayUriResponse) error
 	// Получить изображение с камеры
 	GetSnapshot(context.Context, *GetSnapshotRequest, *GetSnapshotResponse) error
 	// Установить режим "никого нет дома"
@@ -256,7 +256,7 @@ func RegisterCamerasHandler(s server.Server, hdlr CamerasHandler, opts ...server
 		ModifyCamera(ctx context.Context, in *ModifyCameraRequest, out *emptypb.Empty) error
 		DeleteCamera(ctx context.Context, in *DeleteCameraRequest, out *emptypb.Empty) error
 		GetLiveUri(ctx context.Context, in *GetLiveUriRequest, out *GetUriResponse) error
-		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error
+		GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetReplayUriResponse) error
 		GetSnapshot(ctx context.Context, in *GetSnapshotRequest, out *GetSnapshotResponse) error
 		SetNobodyAtHomeMode(ctx context.Context, in *SetNobodyAtHomeModeRequest, out *emptypb.Empty) error
 	}
@@ -291,7 +291,7 @@ func (h *camerasHandler) GetLiveUri(ctx context.Context, in *GetLiveUriRequest, 
 	return h.CamerasHandler.GetLiveUri(ctx, in, out)
 }
 
-func (h *camerasHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetUriResponse) error {
+func (h *camerasHandler) GetReplayUri(ctx context.Context, in *GetReplayUriRequest, out *GetReplayUriResponse) error {
 	return h.CamerasHandler.GetReplayUri(ctx, in, out)
 }
 
