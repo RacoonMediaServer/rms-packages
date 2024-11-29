@@ -68,6 +68,9 @@ message AddJobRequest {
 
   // Транскодировать только определенное количество секунд
   optional uint32 duration = 5;
+
+  // Пропустить в источнике некоторое количество секунд
+  optional uint32 offset = 6;
 }
 
 message AddJobResponse {
