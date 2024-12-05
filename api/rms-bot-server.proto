@@ -4,12 +4,15 @@ import "google/protobuf/empty.proto";
 option go_package = "../rms-bot-server";
 
 service RmsBotServer {
-  // Дропнуть сессию с указанным ключем
+  // Дропнуть сессию указанного клиента
   rpc DropSession(DropSessionRequest) returns (google.protobuf.Empty);
 }
 
 message DropSessionRequest {
-  // Токен
-  string token = 1;
+  // Идентификатор
+  string id = 1;
+
+  // Домен (по сути идентификатор бота)
+  string domain = 2;
 }
 

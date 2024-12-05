@@ -37,7 +37,7 @@ func NewRmsBotServerEndpoints() []*api.Endpoint {
 // Client API for RmsBotServer service
 
 type RmsBotServerService interface {
-	// Дропнуть сессию с указанным ключем
+	// Дропнуть сессию указанного клиента
 	DropSession(ctx context.Context, in *DropSessionRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 }
 
@@ -66,7 +66,7 @@ func (c *rmsBotServerService) DropSession(ctx context.Context, in *DropSessionRe
 // Server API for RmsBotServer service
 
 type RmsBotServerHandler interface {
-	// Дропнуть сессию с указанным ключем
+	// Дропнуть сессию указанного клиента
 	DropSession(context.Context, *DropSessionRequest, *emptypb.Empty) error
 }
 
