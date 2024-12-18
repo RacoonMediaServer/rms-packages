@@ -57,19 +57,20 @@ message Malfunction {
   string stackTrace = 5;
 }
 
-// CCTV security alerts
-message Alert {
-  enum Kind {
+enum AlertKind {
     MotionDetected = 0;
     TamperDetected = 1;
     CrossLineDetected = 2;
     GuestDetected = 3;
     IntrusionDetected = 4;
-  }
+}
+
+// CCTV security alerts
+message Alert {
   string sender = 8;
   int64 timestamp = 1;
   string camera = 2;
-  Kind kind = 3;
+  AlertKind kind = 3;
   bytes image = 4;
   string imageMimeType = 5;
   uint64 durationSec = 6; // длительность события (мб предполагаемая)
@@ -78,11 +79,23 @@ message Alert {
 
 // Security incidents
 message Incident {
-  message Image {
-    bytes image = 1;
-    string mimeType = 2;
+  message Record {
+    string camera = 1;
+    AlertKind kind = 2;
+    int64 begin = 3;
+    int64 duration = 4;
+    int64 end = 5;
+    string snapshotPath = 6;
+    string snapshotMimeType = 7;
+    string videoPath = 8;
+    string videoURL = 9; 
   }
+  
   string sender = 1;
-  string text = 2;
-  repeated Image images = 3;
+  repeated string cameras = 2
+  int64 begin = 3
+  int64 duration = 4
+  int64 end = 5
+
+  repeated Record Records = 3;
 }
