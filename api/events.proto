@@ -79,23 +79,24 @@ message Alert {
 
 // Security incidents
 message Incident {
-  message Record {
+  message Event {
     string camera = 1;
     AlertKind kind = 2;
     int64 begin = 3;
     int64 duration = 4;
     int64 end = 5;
-    string snapshotPath = 6;
-    string snapshotMimeType = 7;
-    string videoPath = 8;
-    string videoURL = 9; 
+    repeated string snapshots = 6;
   }
   
   string sender = 1;
-  repeated string cameras = 2;
-  int64 begin = 3;
-  int64 duration = 4;
-  int64 end = 5;
+  string id = 2;
+  repeated string cameras = 3;
+  int64 begin = 4;
+  int64 duration = 5;
+  int64 end = 6;
 
-  repeated Record Records = 6;
+  repeated Event Events = 7;
+  
+  repeated string videos = 8;
+  repeated string recordings = 9;
 }
