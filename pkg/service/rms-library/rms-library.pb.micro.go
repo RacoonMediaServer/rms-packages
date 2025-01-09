@@ -39,6 +39,8 @@ func NewRmsLibraryEndpoints() []*api.Endpoint {
 type RmsLibraryService interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
 	SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...client.CallOption) (*SearchMovieResponse, error)
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// скачать указанный фильм или сериал в автоматическом режиме
 	DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error)
 	// найти варианты раздачи для фильма или сериала
@@ -74,6 +76,16 @@ func NewRmsLibraryService(name string, c client.Client) RmsLibraryService {
 func (c *rmsLibraryService) SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...client.CallOption) (*SearchMovieResponse, error) {
 	req := c.c.NewRequest(c.name, "RmsLibrary.SearchMovie", in)
 	out := new(SearchMovieResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rmsLibraryService) WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "RmsLibrary.WatchLater", in)
+	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -176,6 +188,8 @@ func (c *rmsLibraryService) DeleteMovie(ctx context.Context, in *DeleteMovieRequ
 type RmsLibraryHandler interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
 	SearchMovie(context.Context, *SearchMovieRequest, *SearchMovieResponse) error
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	WatchLater(context.Context, *WatchLaterRequest, *emptypb.Empty) error
 	// скачать указанный фильм или сериал в автоматическом режиме
 	DownloadMovieAuto(context.Context, *DownloadMovieAutoRequest, *DownloadMovieAutoResponse) error
 	// найти варианты раздачи для фильма или сериала
@@ -199,6 +213,7 @@ type RmsLibraryHandler interface {
 func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...server.HandlerOption) error {
 	type rmsLibrary interface {
 		SearchMovie(ctx context.Context, in *SearchMovieRequest, out *SearchMovieResponse) error
+		WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error
 		DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error
 		FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error
 		FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error
@@ -222,6 +237,10 @@ type rmsLibraryHandler struct {
 
 func (h *rmsLibraryHandler) SearchMovie(ctx context.Context, in *SearchMovieRequest, out *SearchMovieResponse) error {
 	return h.RmsLibraryHandler.SearchMovie(ctx, in, out)
+}
+
+func (h *rmsLibraryHandler) WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error {
+	return h.RmsLibraryHandler.WatchLater(ctx, in, out)
 }
 
 func (h *rmsLibraryHandler) DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error {

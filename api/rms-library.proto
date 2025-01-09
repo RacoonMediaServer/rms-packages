@@ -7,6 +7,9 @@ service RmsLibrary {
   // поиск информации о фильмах и сериалах во внешних источниках
   rpc SearchMovie(SearchMovieRequest) returns (SearchMovieResponse);
 
+  // добавить медиа в библиотеку с целью скачивания позднее по запросу
+  rpc WatchLater(WatchLaterRequest) returns (google.protobuf.Empty);
+
   // скачать указанный фильм или сериал в автоматическом режиме
   rpc DownloadMovieAuto(DownloadMovieAutoRequest) returns (DownloadMovieAutoResponse);
 
@@ -226,6 +229,11 @@ message UploadMovieRequest {
 
   // торрент-файл для загрузки
   bytes torrentFile = 4;
+}
+
+message WatchLaterRequest {
+  // идентификатор медиа
+  string id = 1;
 }
 
 
