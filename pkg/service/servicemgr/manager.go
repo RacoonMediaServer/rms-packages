@@ -55,9 +55,19 @@ func (f ServiceFactory) NewBotServer() rms_bot_server.RmsBotServerService {
 	return rms_bot_server.NewRmsBotServerService("rms-bot-server", f.constructor.Client())
 }
 
-// NewLibrary creates connection to rms-library service
-func (f ServiceFactory) NewLibrary() rms_library.RmsLibraryService {
-	return rms_library.NewRmsLibraryService("rms-library", f.constructor.Client())
+// NewMovies creates connection to rms-library service
+func (f ServiceFactory) NewMovies() rms_library.MoviesService {
+	return rms_library.NewMoviesService("rms-library", f.constructor.Client())
+}
+
+// NewMusic creates connection to rms-library service
+func (f ServiceFactory) NewMusic() rms_library.MusicService {
+	return rms_library.NewMusicService("rms-library", f.constructor.Client())
+}
+
+// NewTorrents creates connection to rms-library service
+func (f ServiceFactory) NewTorrents() rms_library.TorrentsService {
+	return rms_library.NewTorrentsService("rms-library", f.constructor.Client())
 }
 
 // NewTorrent creates connection to rms-library service
