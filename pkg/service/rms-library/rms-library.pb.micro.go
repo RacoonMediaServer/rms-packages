@@ -28,53 +28,53 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Api Endpoints for RmsLibrary service
+// Api Endpoints for Movies service
 
-func NewRmsLibraryEndpoints() []*api.Endpoint {
+func NewMoviesEndpoints() []*api.Endpoint {
 	return []*api.Endpoint{}
 }
 
-// Client API for RmsLibrary service
+// Client API for Movies service
 
-type RmsLibraryService interface {
+type MoviesService interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
-	SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...client.CallOption) (*SearchMovieResponse, error)
-	// добавить медиа в библиотеку с целью скачивания позднее по запросу
-	WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchMovieResponse, error)
 	// скачать указанный фильм или сериал в автоматическом режиме
-	DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error)
+	DownloadAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error)
 	// найти варианты раздачи для фильма или сериала
-	FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
-	// найти на торрентах просто какой то контент без привзяки к типу
-	FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	FindTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
 	// скачать выбранную раздачу
-	DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
-	// Згрузить торрент-файл фильма или сериала или просто ролика
-	UploadMovie(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// загрузить торрент-файл фильма или сериала или просто ролика
+	Upload(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// получить список фильмов/сериалов и пути к их контенту
+	List(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error)
+	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
+	Get(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error)
+	// удаление фильмов/сериалов
+	Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*emptypb.Empty, error)
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error)
-	// получить список фильмов/сериалов и пути к их контенту
-	GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error)
-	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
-	GetMovie(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error)
-	// удаление фильмов/сериалов
-	DeleteMovie(ctx context.Context, in *DeleteMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// посмотреть, что было добавлено в список на скачивание по запросу
+	GetWatchList(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error)
 }
 
-type rmsLibraryService struct {
+type moviesService struct {
 	c    client.Client
 	name string
 }
 
-func NewRmsLibraryService(name string, c client.Client) RmsLibraryService {
-	return &rmsLibraryService{
+func NewMoviesService(name string, c client.Client) MoviesService {
+	return &moviesService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *rmsLibraryService) SearchMovie(ctx context.Context, in *SearchMovieRequest, opts ...client.CallOption) (*SearchMovieResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.SearchMovie", in)
+func (c *moviesService) Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchMovieResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.Search", in)
 	out := new(SearchMovieResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -83,18 +83,8 @@ func (c *rmsLibraryService) SearchMovie(ctx context.Context, in *SearchMovieRequ
 	return out, nil
 }
 
-func (c *rmsLibraryService) WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.WatchLater", in)
-	out := new(emptypb.Empty)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsLibraryService) DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.DownloadMovieAuto", in)
+func (c *moviesService) DownloadAuto(ctx context.Context, in *DownloadMovieAutoRequest, opts ...client.CallOption) (*DownloadMovieAutoResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.DownloadAuto", in)
 	out := new(DownloadMovieAutoResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -103,8 +93,8 @@ func (c *rmsLibraryService) DownloadMovieAuto(ctx context.Context, in *DownloadM
 	return out, nil
 }
 
-func (c *rmsLibraryService) FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.FindMovieTorrents", in)
+func (c *moviesService) FindTorrents(ctx context.Context, in *FindMovieTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.FindTorrents", in)
 	out := new(FindTorrentsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -113,18 +103,8 @@ func (c *rmsLibraryService) FindMovieTorrents(ctx context.Context, in *FindMovie
 	return out, nil
 }
 
-func (c *rmsLibraryService) FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.FindTorrents", in)
-	out := new(FindTorrentsResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsLibraryService) DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.DownloadTorrent", in)
+func (c *moviesService) Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Movies.Download", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -133,8 +113,8 @@ func (c *rmsLibraryService) DownloadTorrent(ctx context.Context, in *DownloadTor
 	return out, nil
 }
 
-func (c *rmsLibraryService) UploadMovie(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.UploadMovie", in)
+func (c *moviesService) Upload(ctx context.Context, in *UploadMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Movies.Upload", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -143,18 +123,8 @@ func (c *rmsLibraryService) UploadMovie(ctx context.Context, in *UploadMovieRequ
 	return out, nil
 }
 
-func (c *rmsLibraryService) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.GetTvSeriesUpdates", in)
-	out := new(GetTvSeriesUpdatesResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rmsLibraryService) GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovies", in)
+func (c *moviesService) List(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.List", in)
 	out := new(GetMoviesResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -163,8 +133,8 @@ func (c *rmsLibraryService) GetMovies(ctx context.Context, in *GetMoviesRequest,
 	return out, nil
 }
 
-func (c *rmsLibraryService) GetMovie(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.GetMovie", in)
+func (c *moviesService) Get(ctx context.Context, in *GetMovieRequest, opts ...client.CallOption) (*GetMovieResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.Get", in)
 	out := new(GetMovieResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -173,8 +143,8 @@ func (c *rmsLibraryService) GetMovie(ctx context.Context, in *GetMovieRequest, o
 	return out, nil
 }
 
-func (c *rmsLibraryService) DeleteMovie(ctx context.Context, in *DeleteMovieRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
-	req := c.c.NewRequest(c.name, "RmsLibrary.DeleteMovie", in)
+func (c *moviesService) Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Movies.Delete", in)
 	out := new(emptypb.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -183,98 +153,497 @@ func (c *rmsLibraryService) DeleteMovie(ctx context.Context, in *DeleteMovieRequ
 	return out, nil
 }
 
-// Server API for RmsLibrary service
+func (c *moviesService) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetTvSeriesUpdatesResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.GetTvSeriesUpdates", in)
+	out := new(GetTvSeriesUpdatesResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type RmsLibraryHandler interface {
+func (c *moviesService) WatchLater(ctx context.Context, in *WatchLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Movies.WatchLater", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *moviesService) GetWatchList(ctx context.Context, in *GetMoviesRequest, opts ...client.CallOption) (*GetMoviesResponse, error) {
+	req := c.c.NewRequest(c.name, "Movies.GetWatchList", in)
+	out := new(GetMoviesResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Movies service
+
+type MoviesHandler interface {
 	// поиск информации о фильмах и сериалах во внешних источниках
-	SearchMovie(context.Context, *SearchMovieRequest, *SearchMovieResponse) error
-	// добавить медиа в библиотеку с целью скачивания позднее по запросу
-	WatchLater(context.Context, *WatchLaterRequest, *emptypb.Empty) error
+	Search(context.Context, *SearchRequest, *SearchMovieResponse) error
 	// скачать указанный фильм или сериал в автоматическом режиме
-	DownloadMovieAuto(context.Context, *DownloadMovieAutoRequest, *DownloadMovieAutoResponse) error
+	DownloadAuto(context.Context, *DownloadMovieAutoRequest, *DownloadMovieAutoResponse) error
 	// найти варианты раздачи для фильма или сериала
-	FindMovieTorrents(context.Context, *FindMovieTorrentsRequest, *FindTorrentsResponse) error
-	// найти на торрентах просто какой то контент без привзяки к типу
-	FindTorrents(context.Context, *FindTorrentsRequest, *FindTorrentsResponse) error
+	FindTorrents(context.Context, *FindMovieTorrentsRequest, *FindTorrentsResponse) error
 	// скачать выбранную раздачу
-	DownloadTorrent(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
-	// Згрузить торрент-файл фильма или сериала или просто ролика
-	UploadMovie(context.Context, *UploadMovieRequest, *emptypb.Empty) error
+	Download(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+	// загрузить торрент-файл фильма или сериала или просто ролика
+	Upload(context.Context, *UploadMovieRequest, *emptypb.Empty) error
+	// получить список фильмов/сериалов и пути к их контенту
+	List(context.Context, *GetMoviesRequest, *GetMoviesResponse) error
+	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
+	Get(context.Context, *GetMovieRequest, *GetMovieResponse) error
+	// удаление фильмов/сериалов
+	Delete(context.Context, *DeleteRequest, *emptypb.Empty) error
 	// получить список доступных новых сезонов для скачивания
 	GetTvSeriesUpdates(context.Context, *emptypb.Empty, *GetTvSeriesUpdatesResponse) error
-	// получить список фильмов/сериалов и пути к их контенту
-	GetMovies(context.Context, *GetMoviesRequest, *GetMoviesResponse) error
-	// получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
-	GetMovie(context.Context, *GetMovieRequest, *GetMovieResponse) error
-	// удаление фильмов/сериалов
-	DeleteMovie(context.Context, *DeleteMovieRequest, *emptypb.Empty) error
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	WatchLater(context.Context, *WatchLaterRequest, *emptypb.Empty) error
+	// посмотреть, что было добавлено в список на скачивание по запросу
+	GetWatchList(context.Context, *GetMoviesRequest, *GetMoviesResponse) error
 }
 
-func RegisterRmsLibraryHandler(s server.Server, hdlr RmsLibraryHandler, opts ...server.HandlerOption) error {
-	type rmsLibrary interface {
-		SearchMovie(ctx context.Context, in *SearchMovieRequest, out *SearchMovieResponse) error
-		WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error
-		DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error
-		FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error
-		FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error
-		DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
-		UploadMovie(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error
+func RegisterMoviesHandler(s server.Server, hdlr MoviesHandler, opts ...server.HandlerOption) error {
+	type movies interface {
+		Search(ctx context.Context, in *SearchRequest, out *SearchMovieResponse) error
+		DownloadAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error
+		FindTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error
+		Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+		Upload(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error
+		List(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
+		Get(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error
+		Delete(ctx context.Context, in *DeleteRequest, out *emptypb.Empty) error
 		GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error
-		GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
-		GetMovie(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error
-		DeleteMovie(ctx context.Context, in *DeleteMovieRequest, out *emptypb.Empty) error
+		WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error
+		GetWatchList(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error
 	}
-	type RmsLibrary struct {
-		rmsLibrary
+	type Movies struct {
+		movies
 	}
-	h := &rmsLibraryHandler{hdlr}
-	return s.Handle(s.NewHandler(&RmsLibrary{h}, opts...))
+	h := &moviesHandler{hdlr}
+	return s.Handle(s.NewHandler(&Movies{h}, opts...))
 }
 
-type rmsLibraryHandler struct {
-	RmsLibraryHandler
+type moviesHandler struct {
+	MoviesHandler
 }
 
-func (h *rmsLibraryHandler) SearchMovie(ctx context.Context, in *SearchMovieRequest, out *SearchMovieResponse) error {
-	return h.RmsLibraryHandler.SearchMovie(ctx, in, out)
+func (h *moviesHandler) Search(ctx context.Context, in *SearchRequest, out *SearchMovieResponse) error {
+	return h.MoviesHandler.Search(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error {
-	return h.RmsLibraryHandler.WatchLater(ctx, in, out)
+func (h *moviesHandler) DownloadAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error {
+	return h.MoviesHandler.DownloadAuto(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) DownloadMovieAuto(ctx context.Context, in *DownloadMovieAutoRequest, out *DownloadMovieAutoResponse) error {
-	return h.RmsLibraryHandler.DownloadMovieAuto(ctx, in, out)
+func (h *moviesHandler) FindTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error {
+	return h.MoviesHandler.FindTorrents(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) FindMovieTorrents(ctx context.Context, in *FindMovieTorrentsRequest, out *FindTorrentsResponse) error {
-	return h.RmsLibraryHandler.FindMovieTorrents(ctx, in, out)
+func (h *moviesHandler) Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.MoviesHandler.Download(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error {
-	return h.RmsLibraryHandler.FindTorrents(ctx, in, out)
+func (h *moviesHandler) Upload(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error {
+	return h.MoviesHandler.Upload(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) DownloadTorrent(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
-	return h.RmsLibraryHandler.DownloadTorrent(ctx, in, out)
+func (h *moviesHandler) List(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error {
+	return h.MoviesHandler.List(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) UploadMovie(ctx context.Context, in *UploadMovieRequest, out *emptypb.Empty) error {
-	return h.RmsLibraryHandler.UploadMovie(ctx, in, out)
+func (h *moviesHandler) Get(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error {
+	return h.MoviesHandler.Get(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error {
-	return h.RmsLibraryHandler.GetTvSeriesUpdates(ctx, in, out)
+func (h *moviesHandler) Delete(ctx context.Context, in *DeleteRequest, out *emptypb.Empty) error {
+	return h.MoviesHandler.Delete(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) GetMovies(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error {
-	return h.RmsLibraryHandler.GetMovies(ctx, in, out)
+func (h *moviesHandler) GetTvSeriesUpdates(ctx context.Context, in *emptypb.Empty, out *GetTvSeriesUpdatesResponse) error {
+	return h.MoviesHandler.GetTvSeriesUpdates(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) GetMovie(ctx context.Context, in *GetMovieRequest, out *GetMovieResponse) error {
-	return h.RmsLibraryHandler.GetMovie(ctx, in, out)
+func (h *moviesHandler) WatchLater(ctx context.Context, in *WatchLaterRequest, out *emptypb.Empty) error {
+	return h.MoviesHandler.WatchLater(ctx, in, out)
 }
 
-func (h *rmsLibraryHandler) DeleteMovie(ctx context.Context, in *DeleteMovieRequest, out *emptypb.Empty) error {
-	return h.RmsLibraryHandler.DeleteMovie(ctx, in, out)
+func (h *moviesHandler) GetWatchList(ctx context.Context, in *GetMoviesRequest, out *GetMoviesResponse) error {
+	return h.MoviesHandler.GetWatchList(ctx, in, out)
+}
+
+// Api Endpoints for Music service
+
+func NewMusicEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for Music service
+
+type MusicService interface {
+	// поиск информации о музыке во внешних источниках
+	Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchMusicResponse, error)
+	// скачать указанный альбом или дискографию в автоматическом режиме
+	DownloadAuto(ctx context.Context, in *DownloadMusicAutoRequest, opts ...client.CallOption) (*DownloadMusicAutoResponse, error)
+	// найти варианты раздачи для исполнителя или альбома
+	FindTorrents(ctx context.Context, in *FindMusicTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	// скачать выбранную раздачу
+	Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// загрузить торрент-файл альбома или дискографии
+	Upload(ctx context.Context, in *UploadMusicRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// получить список исполнителей
+	List(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*ListArtistsResponse, error)
+	// удаление  исполнителей
+	Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// получить список доступных новых сезонов для скачивания
+	GetAlbumsUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetAlbumsUpdatesResponse, error)
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	ListenLater(ctx context.Context, in *ListenLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// посмотреть, что было добавлено в список на скачивание по запросу
+	GetListenList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetListenListResponse, error)
+}
+
+type musicService struct {
+	c    client.Client
+	name string
+}
+
+func NewMusicService(name string, c client.Client) MusicService {
+	return &musicService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *musicService) Search(ctx context.Context, in *SearchRequest, opts ...client.CallOption) (*SearchMusicResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.Search", in)
+	out := new(SearchMusicResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) DownloadAuto(ctx context.Context, in *DownloadMusicAutoRequest, opts ...client.CallOption) (*DownloadMusicAutoResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.DownloadAuto", in)
+	out := new(DownloadMusicAutoResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) FindTorrents(ctx context.Context, in *FindMusicTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.FindTorrents", in)
+	out := new(FindTorrentsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Music.Download", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) Upload(ctx context.Context, in *UploadMusicRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Music.Upload", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) List(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*ListArtistsResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.List", in)
+	out := new(ListArtistsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) Delete(ctx context.Context, in *DeleteRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Music.Delete", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) GetAlbumsUpdates(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetAlbumsUpdatesResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.GetAlbumsUpdates", in)
+	out := new(GetAlbumsUpdatesResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) ListenLater(ctx context.Context, in *ListenLaterRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Music.ListenLater", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *musicService) GetListenList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*GetListenListResponse, error) {
+	req := c.c.NewRequest(c.name, "Music.GetListenList", in)
+	out := new(GetListenListResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Music service
+
+type MusicHandler interface {
+	// поиск информации о музыке во внешних источниках
+	Search(context.Context, *SearchRequest, *SearchMusicResponse) error
+	// скачать указанный альбом или дискографию в автоматическом режиме
+	DownloadAuto(context.Context, *DownloadMusicAutoRequest, *DownloadMusicAutoResponse) error
+	// найти варианты раздачи для исполнителя или альбома
+	FindTorrents(context.Context, *FindMusicTorrentsRequest, *FindTorrentsResponse) error
+	// скачать выбранную раздачу
+	Download(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+	// загрузить торрент-файл альбома или дискографии
+	Upload(context.Context, *UploadMusicRequest, *emptypb.Empty) error
+	// получить список исполнителей
+	List(context.Context, *emptypb.Empty, *ListArtistsResponse) error
+	// удаление  исполнителей
+	Delete(context.Context, *DeleteRequest, *emptypb.Empty) error
+	// получить список доступных новых сезонов для скачивания
+	GetAlbumsUpdates(context.Context, *emptypb.Empty, *GetAlbumsUpdatesResponse) error
+	// добавить медиа в библиотеку с целью скачивания позднее по запросу
+	ListenLater(context.Context, *ListenLaterRequest, *emptypb.Empty) error
+	// посмотреть, что было добавлено в список на скачивание по запросу
+	GetListenList(context.Context, *emptypb.Empty, *GetListenListResponse) error
+}
+
+func RegisterMusicHandler(s server.Server, hdlr MusicHandler, opts ...server.HandlerOption) error {
+	type music interface {
+		Search(ctx context.Context, in *SearchRequest, out *SearchMusicResponse) error
+		DownloadAuto(ctx context.Context, in *DownloadMusicAutoRequest, out *DownloadMusicAutoResponse) error
+		FindTorrents(ctx context.Context, in *FindMusicTorrentsRequest, out *FindTorrentsResponse) error
+		Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+		Upload(ctx context.Context, in *UploadMusicRequest, out *emptypb.Empty) error
+		List(ctx context.Context, in *emptypb.Empty, out *ListArtistsResponse) error
+		Delete(ctx context.Context, in *DeleteRequest, out *emptypb.Empty) error
+		GetAlbumsUpdates(ctx context.Context, in *emptypb.Empty, out *GetAlbumsUpdatesResponse) error
+		ListenLater(ctx context.Context, in *ListenLaterRequest, out *emptypb.Empty) error
+		GetListenList(ctx context.Context, in *emptypb.Empty, out *GetListenListResponse) error
+	}
+	type Music struct {
+		music
+	}
+	h := &musicHandler{hdlr}
+	return s.Handle(s.NewHandler(&Music{h}, opts...))
+}
+
+type musicHandler struct {
+	MusicHandler
+}
+
+func (h *musicHandler) Search(ctx context.Context, in *SearchRequest, out *SearchMusicResponse) error {
+	return h.MusicHandler.Search(ctx, in, out)
+}
+
+func (h *musicHandler) DownloadAuto(ctx context.Context, in *DownloadMusicAutoRequest, out *DownloadMusicAutoResponse) error {
+	return h.MusicHandler.DownloadAuto(ctx, in, out)
+}
+
+func (h *musicHandler) FindTorrents(ctx context.Context, in *FindMusicTorrentsRequest, out *FindTorrentsResponse) error {
+	return h.MusicHandler.FindTorrents(ctx, in, out)
+}
+
+func (h *musicHandler) Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.MusicHandler.Download(ctx, in, out)
+}
+
+func (h *musicHandler) Upload(ctx context.Context, in *UploadMusicRequest, out *emptypb.Empty) error {
+	return h.MusicHandler.Upload(ctx, in, out)
+}
+
+func (h *musicHandler) List(ctx context.Context, in *emptypb.Empty, out *ListArtistsResponse) error {
+	return h.MusicHandler.List(ctx, in, out)
+}
+
+func (h *musicHandler) Delete(ctx context.Context, in *DeleteRequest, out *emptypb.Empty) error {
+	return h.MusicHandler.Delete(ctx, in, out)
+}
+
+func (h *musicHandler) GetAlbumsUpdates(ctx context.Context, in *emptypb.Empty, out *GetAlbumsUpdatesResponse) error {
+	return h.MusicHandler.GetAlbumsUpdates(ctx, in, out)
+}
+
+func (h *musicHandler) ListenLater(ctx context.Context, in *ListenLaterRequest, out *emptypb.Empty) error {
+	return h.MusicHandler.ListenLater(ctx, in, out)
+}
+
+func (h *musicHandler) GetListenList(ctx context.Context, in *emptypb.Empty, out *GetListenListResponse) error {
+	return h.MusicHandler.GetListenList(ctx, in, out)
+}
+
+// Api Endpoints for Torrents service
+
+func NewTorrentsEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for Torrents service
+
+type TorrentsService interface {
+	// найти на торрентах просто какой то контент без привзяки к типу
+	FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	// скачать указанный торрент
+	Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// сохранить указанный торрент для дальнейшего скачивания
+	Save(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+	// получить список сохраненных элементов
+	GetSavedList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*FindTorrentsResponse, error)
+	// выкачать сохраненный торрент
+	DownloadSavedItem(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error)
+}
+
+type torrentsService struct {
+	c    client.Client
+	name string
+}
+
+func NewTorrentsService(name string, c client.Client) TorrentsService {
+	return &torrentsService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *torrentsService) FindTorrents(ctx context.Context, in *FindTorrentsRequest, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "Torrents.FindTorrents", in)
+	out := new(FindTorrentsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *torrentsService) Download(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Torrents.Download", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *torrentsService) Save(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Torrents.Save", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *torrentsService) GetSavedList(ctx context.Context, in *emptypb.Empty, opts ...client.CallOption) (*FindTorrentsResponse, error) {
+	req := c.c.NewRequest(c.name, "Torrents.GetSavedList", in)
+	out := new(FindTorrentsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *torrentsService) DownloadSavedItem(ctx context.Context, in *DownloadTorrentRequest, opts ...client.CallOption) (*emptypb.Empty, error) {
+	req := c.c.NewRequest(c.name, "Torrents.DownloadSavedItem", in)
+	out := new(emptypb.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Torrents service
+
+type TorrentsHandler interface {
+	// найти на торрентах просто какой то контент без привзяки к типу
+	FindTorrents(context.Context, *FindTorrentsRequest, *FindTorrentsResponse) error
+	// скачать указанный торрент
+	Download(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+	// сохранить указанный торрент для дальнейшего скачивания
+	Save(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+	// получить список сохраненных элементов
+	GetSavedList(context.Context, *emptypb.Empty, *FindTorrentsResponse) error
+	// выкачать сохраненный торрент
+	DownloadSavedItem(context.Context, *DownloadTorrentRequest, *emptypb.Empty) error
+}
+
+func RegisterTorrentsHandler(s server.Server, hdlr TorrentsHandler, opts ...server.HandlerOption) error {
+	type torrents interface {
+		FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error
+		Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+		Save(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+		GetSavedList(ctx context.Context, in *emptypb.Empty, out *FindTorrentsResponse) error
+		DownloadSavedItem(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error
+	}
+	type Torrents struct {
+		torrents
+	}
+	h := &torrentsHandler{hdlr}
+	return s.Handle(s.NewHandler(&Torrents{h}, opts...))
+}
+
+type torrentsHandler struct {
+	TorrentsHandler
+}
+
+func (h *torrentsHandler) FindTorrents(ctx context.Context, in *FindTorrentsRequest, out *FindTorrentsResponse) error {
+	return h.TorrentsHandler.FindTorrents(ctx, in, out)
+}
+
+func (h *torrentsHandler) Download(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.TorrentsHandler.Download(ctx, in, out)
+}
+
+func (h *torrentsHandler) Save(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.TorrentsHandler.Save(ctx, in, out)
+}
+
+func (h *torrentsHandler) GetSavedList(ctx context.Context, in *emptypb.Empty, out *FindTorrentsResponse) error {
+	return h.TorrentsHandler.GetSavedList(ctx, in, out)
+}
+
+func (h *torrentsHandler) DownloadSavedItem(ctx context.Context, in *DownloadTorrentRequest, out *emptypb.Empty) error {
+	return h.TorrentsHandler.DownloadSavedItem(ctx, in, out)
 }
