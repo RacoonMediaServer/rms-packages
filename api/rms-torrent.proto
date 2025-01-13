@@ -24,6 +24,10 @@ message DownloadRequest {
   string description = 2;
   // Флажок для игноирования ограничений на скорость скачивания
   bool faster = 3;
+  // Можно определить категорию (по сути - директория, куда будут сохраняться скачанные раздачи)
+  string category = 4;
+  // Можно переопределить базовую директорию для сохранения данных
+  optional string forceLocation = 5;
 }
 
 message DownloadResponse {
