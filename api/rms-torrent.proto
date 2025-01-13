@@ -31,7 +31,10 @@ message DownloadResponse {
   string id = 1;
   // Пути к файлам, которые входят в раздачу
   repeated string files = 2;
+  // Заголовок торрента
+  string title = 3;
 }
+
 message GetTorrentInfoRequest {string id = 1;}
 
 enum Status {
