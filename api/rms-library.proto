@@ -110,6 +110,7 @@ message MovieInfo {
   float rating = 6;
   MovieType type = 7;
   optional uint32 seasons = 8;
+  string originalTitle = 9;
 }
 
 // результат поиска по внешних источниках
