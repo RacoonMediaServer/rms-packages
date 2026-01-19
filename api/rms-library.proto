@@ -288,6 +288,9 @@ message UploadMovieRequest {
 
   // торрент-файл для загрузки
   bytes torrentFile = 4;
+
+  // смотреть онлайн, без загрузки
+  bool watchOnline = 5;
 }
 
 message WatchLaterRequest {
@@ -348,6 +351,9 @@ message UploadMusicRequest {
 
   // торрент-файл для загрузки
   bytes torrentFile = 2;
+
+  // слушать онлайн, без загрузки
+  bool listenOnline = 3;
 }
 
 message ListArtistsResponse {
