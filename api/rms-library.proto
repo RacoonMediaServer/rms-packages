@@ -158,6 +158,9 @@ message DownloadMovieAutoRequest {
 
   // использовать сохраненный список просмотра для поиска раздачи
   bool useWatchList = 4;
+
+  // смотреть онлайн
+  bool watchOnline = 5;
 }
 
 message DownloadMovieAutoResponse {
