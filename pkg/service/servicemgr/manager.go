@@ -71,8 +71,12 @@ func (f ServiceFactory) NewTorrents() rms_library.TorrentsService {
 }
 
 // NewTorrent creates connection to rms-library service
-func (f ServiceFactory) NewTorrent() rms_torrent.RmsTorrentService {
-	return rms_torrent.NewRmsTorrentService("rms-torrent", f.constructor.Client())
+func (f ServiceFactory) NewTorrent(onlinePlayback bool) rms_torrent.RmsTorrentService {
+	serviceName := "rms-torrent"
+	if onlinePlayback {
+		serviceName += "-online"
+	}
+	return rms_torrent.NewRmsTorrentService(serviceName, f.constructor.Client())
 }
 
 // NewBotClient creates connection to rms-bot-client service
