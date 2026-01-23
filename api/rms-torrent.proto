@@ -22,7 +22,7 @@ message DownloadRequest {
   bytes what = 1;
   // Текстовое описание контента (нужно для отправки события)
   string description = 2;
-  // Флажок для игноирования ограничений на скорость скачивания
+  // Флажок для игноирования ограничений на скорость скачивания (deprecated)
   bool faster = 3;
   // Можно определить категорию (по сути - директория, куда будут сохраняться скачанные раздачи)
   string category = 4;
@@ -37,9 +37,11 @@ message DownloadResponse {
   repeated string files = 2;
   // Заголовок торрента
   string title = 3;
+  // Путь к директории, куда будут сохранены данные
+  string location = 4;
 }
 
-message GetTorrentInfoRequest {string id = 1;}
+message GetTorrentInfoRequest { string id = 1; }
 
 enum Status {
   Pending = 0;
@@ -66,11 +68,15 @@ message TorrentInfo {
 
   // Сколько Мб необходимо загрузить
   uint64 sizeMB = 6;
+
+  // Путь к директории, куда будут сохранены данные
+  string location = 7;
 }
-message GetTorrentsRequest {bool includeDoneTorrents = 1;}
-message GetTorrentsResponse {repeated TorrentInfo torrents = 1;}
-message RemoveTorrentRequest {string id = 1;}
-message UpPriorityRequest{string id = 1;}
+
+message GetTorrentsRequest { bool includeDoneTorrents = 1; }
+message GetTorrentsResponse { repeated TorrentInfo torrents = 1; }
+message RemoveTorrentRequest { string id = 1; }
+message UpPriorityRequest { string id = 1; }
 
 message TorrentSettings {
   uint64 DownloadLimit = 1;
