@@ -203,6 +203,9 @@ message FindTorrentsResponse {
 message DownloadTorrentRequest {
   // ID раздачи
   string torrentId = 1;
+
+  // Не скачивать, а воспроизводить контент на лету
+  bool watchOnline = 2;
 }
 
 // инфа о новых сезонах одного сериала
