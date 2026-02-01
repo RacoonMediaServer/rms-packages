@@ -70,6 +70,16 @@ func (f ServiceFactory) NewTorrents() rms_library.TorrentsService {
 	return rms_library.NewTorrentsService("rms-library", f.constructor.Client())
 }
 
+// NewLists creates connection to rms-library service
+func (f ServiceFactory) NewLists() rms_library.ListsService {
+	return rms_library.NewListsService("rms-library", f.constructor.Client())
+}
+
+// NewLists creates connection to rms-library service
+func (f ServiceFactory) NewOthers() rms_library.OtherService {
+	return rms_library.NewOtherService("rms-library", f.constructor.Client())
+}
+
 // NewTorrent creates connection to rms-library service
 func (f ServiceFactory) NewTorrent(onlinePlayback bool) rms_torrent.RmsTorrentService {
 	serviceName := "rms-torrent"

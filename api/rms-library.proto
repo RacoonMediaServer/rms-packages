@@ -3,92 +3,210 @@ import "google/protobuf/empty.proto";
 
 option go_package = "../rms-library";
 
+service Lists {
+  // добавление указанного тайтла в указанный список
+  rpc Add(ListsAddRequest) returns (google.protobuf.Empty);
+
+  // перечислить элементы списка
+  rpc List(ListsListRequest) returns (ListsListResponse);
+
+  // переместить тайтл в другой список
+  rpc Move(ListsMoveRequest) returns (google.protobuf.Empty);
+
+  // удаление указанного тайтла из списка
+  rpc Delete(ListsDeleteRequest) returns (google.protobuf.Empty);
+}
+
+service Torrents {
+  // получить список раздач, принадлежащих указанному тайтлу
+  rpc List(TorrentsListRequest) returns (TorrentsListResponse);
+
+  // заменить указанную раздачу
+  rpc Replace(TorrentsReplaceRequest) returns (google.protobuf.Empty);
+
+  // найти альтернативные варианты раздачи
+  rpc FindAlternatives(TorrentsFindAlternativesRequest) returns (TorrentsFindAlternativesResponse);
+
+  // добавить раздачу к тайтлу
+  rpc Add(TorrentsAddRequest) returns (google.protobuf.Empty);
+
+  // удалить раздачу
+  rpc Delete(TorrentsDeleteRequest) returns (google.protobuf.Empty);
+}
+
 service Movies {
   // поиск информации о фильмах и сериалах во внешних источниках
-  rpc Search(SearchRequest) returns (SearchMovieResponse);
-
-  // скачать указанный фильм или сериал в автоматическом режиме
-  rpc DownloadAuto(DownloadMovieAutoRequest) returns (DownloadMovieAutoResponse);
-
-  // найти варианты раздачи для фильма или сериала
-  rpc FindTorrents(FindMovieTorrentsRequest) returns (FindTorrentsResponse);
-
-  // скачать выбранную раздачу
-  rpc Download(DownloadTorrentRequest) returns (google.protobuf.Empty);
-
-  // загрузить торрент-файл фильма или сериала или просто ролика
-  rpc Upload(UploadMovieRequest) returns (google.protobuf.Empty);
-
-  // получить список фильмов/сериалов и пути к их контенту
-  rpc List(GetMoviesRequest) returns (GetMoviesResponse);
+  rpc Search(MoviesSearchRequest) returns (MoviesSearchResponse);
 
   // получить инфу о фильме/сериале, присутствующем в библиотеке по его ID
-  rpc Get(GetMovieRequest) returns (GetMovieResponse);
-
-  // удаление фильмов/сериалов
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  rpc Get(MoviesGetRequest) returns (MoviesGetResponse);
 
   // получить список доступных новых сезонов для скачивания
-  rpc GetTvSeriesUpdates(google.protobuf.Empty) returns (GetTvSeriesUpdatesResponse);
-
-  // добавить медиа в библиотеку с целью скачивания позднее по запросу
-  rpc WatchLater(WatchLaterRequest) returns (google.protobuf.Empty);
-
-  // посмотреть, что было добавлено в список на скачивание по запросу
-  rpc GetWatchList(GetMoviesRequest) returns (GetMoviesResponse);
+  rpc GetUpdates(google.protobuf.Empty) returns (MoviesGetUpdatesResponse);
 }
 
 service Music {
   // поиск информации о музыке во внешних источниках
-  rpc Search(SearchRequest) returns (SearchMusicResponse);
-
-  // скачать указанный альбом или дискографию в автоматическом режиме
-  rpc DownloadAuto(DownloadMusicAutoRequest) returns (DownloadMusicAutoResponse);
-
-  // найти варианты раздачи для исполнителя или альбома
-  rpc FindTorrents(FindMusicTorrentsRequest) returns (FindTorrentsResponse);
-
-  // скачать выбранную раздачу
-  rpc Download(DownloadTorrentRequest) returns (google.protobuf.Empty);
-
-  // загрузить торрент-файл альбома или дискографии
-  rpc Upload(UploadMusicRequest) returns (google.protobuf.Empty);
-
-  // получить список исполнителей
-  rpc List(google.protobuf.Empty) returns (ListArtistsResponse);
-
-  // удаление  исполнителей
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  rpc Search(MusicSearchRequest) returns (MusicSearchResponse);
 
   // получить список доступных новых сезонов для скачивания
-  rpc GetAlbumsUpdates(google.protobuf.Empty) returns (GetAlbumsUpdatesResponse);
-
-  // добавить медиа в библиотеку с целью скачивания позднее по запросу
-  rpc ListenLater(ListenLaterRequest) returns (google.protobuf.Empty);
-
-  // посмотреть, что было добавлено в список на скачивание по запросу
-  rpc GetListenList(google.protobuf.Empty) returns (GetListenListResponse);
+  rpc GetUpdates(google.protobuf.Empty) returns (MusicGetUpdatesResponse);
 }
 
-service Torrents {
-  // найти на торрентах просто какой то контент без привзяки к типу
-  rpc FindTorrents(FindTorrentsRequest) returns (FindTorrentsResponse);
+service Other {
+  // поиск по торрентам
+  rpc Search(OtherSearchRequest) returns (OtherSearchResponse);
+}
 
-  // скачать указанный торрент
-  rpc Download(DownloadTorrentRequest) returns (google.protobuf.Empty);
+// список тайтлов
+enum List {
+  // любимые тайтлы
+  Favourites = 0;
+  // список "к просмотру"
+  WatchList = 1;
+  // архив раздач
+  Archive = 2;
+}
 
-  // сохранить указанный торрент для дальнейшего скачивания
-  rpc Save(DownloadTorrentRequest) returns (google.protobuf.Empty);
+enum ContentType {
+  // видео - фильмы/сериалы/клипы
+  TypeMovies = 0;
+  // музыка
+  TypeMusic = 1;
+  // разное
+  TypeOther = 2;
+}
 
-  // получить список сохраненных элементов
-  rpc GetSavedList(google.protobuf.Empty) returns (FindTorrentsResponse);
+message Pagination {
+  // смещение относительно первого результата
+  uint32 offset = 1;
 
-  // выкачать сохраненный торрент
-  rpc DownloadSavedItem(DownloadTorrentRequest) returns (google.protobuf.Empty);
+  // максимальное кол-во элементов
+  uint32 count = 2;
+}
+
+message ListsAddRequest {
+  // глобальный идентификатор тайтла
+  string id = 1;
+
+  // в какой список добавляем тайтл
+  List list = 2;
+}
+
+message ListsListRequest {
+  // элементы какого списка отобразить
+  List list = 1;
+
+  // тип медиа
+  optional ContentType contentType = 2;
+
+  // разбиение на страницы
+  optional Pagination pagination = 3;
+}
+
+message ListItem {
+  // идентификатор
+  string id = 1;
+
+  // название
+  string title = 2;
+
+  // тип медиа
+  ContentType contentType = 3;
+
+  // занимаемое на диске место (Мб)
+  uint64 size = 4;
+}
+
+message ListsListResponse {
+  // тайтлы
+  repeated ListItem items = 1;
+}
+
+message ListsMoveRequest {
+  // идентификатор
+  string id = 1;
+
+  // в какой список переместить
+  List list = 2;
+}
+
+message ListsDeleteRequest {
+  // идентификатор
+  string id = 1;
+}
+
+message TorrentsListRequest {
+  // идентификатор тайтла
+  string id = 1;
+}
+
+// раздача на торренте
+message Torrent {
+  // ID для идентификации данной раздачи
+  string id = 1;
+
+  // заголовок раздачи
+  string title = 2;
+
+  // размер раздачи в мегабайтах
+  uint64 size = 3;
+
+  // кол-во раздающих
+  uint32 seeders = 4;
+}
+
+message TorrentsListResponse {
+  repeated Torrent torrents = 1;
+}
+
+message TorrentsReplaceRequest {
+  // идентификатор тайтла
+  string id = 1;
+
+  // идентификатор раздачи
+  string torrentId = 2;
+
+  // идентификатор новой раздачи
+  optional string newTorrentId = 3;
+
+  // торрент-файл для замены
+  optional bytes torrentFile = 4;
+}
+
+message TorrentsFindAlternativesRequest {
+  // идентификатор тайтла
+  string id = 1;
+
+  // идентификатор раздачи
+  string torrentId = 2;
+}
+
+message TorrentsFindAlternativesResponse {
+  repeated Torrent torrents = 1;
+}
+
+message TorrentsAddRequest {
+  // идентификатор тайтла
+  string id = 1;
+
+  // идентификатор новой раздачи
+  string newTorrentId = 2;
+
+  // торрент-файл для замены
+  optional bytes torrentFile = 3;
+}
+
+message TorrentsDeleteRequest {
+  // идентификатор тайтла
+  string id = 1;
+
+  // идентификатор раздачи
+  string torrentId = 2;
 }
 
 // запрос на поиск во внешних источниках
-message SearchRequest {
+message MoviesSearchRequest {
   string text = 1;
   uint32 limit = 2;
 }
@@ -126,86 +244,18 @@ message FoundMovie {
 }
 
 // результат поиска - несколько вариантов фильма/сериала
-message SearchMovieResponse {
+message MoviesSearchResponse {
   repeated FoundMovie movies = 1;
 }
 
-// раздача на торренте
-message Torrent {
-  // ID для идентификации данной раздачи
+message MoviesGetRequest {
+  // идентификатор тайтла
   string id = 1;
-
-  // заголовок раздачи
-  string title = 2;
-
-  // размер раздачи в мегабайтах
-  uint64 size = 3;
-
-  // кол-во раздающих
-  uint32 seeders = 4;
 }
 
-// скачать указанный фильм, или сезон сериала
-message DownloadMovieAutoRequest {
-  // сквозной ID фильма/сериала
-  string id = 1;
-
-  // какой сезон скачать, если не указан - скачать отсутствующие в библиотеке сезоны
-  optional uint32 season = 2;
-
-  // флаг для более быстрого скачивания
-  bool faster = 3;
-
-  // использовать сохраненный список просмотра для поиска раздачи
-  bool useWatchList = 4;
-
-  // смотреть онлайн
-  bool watchOnline = 5;
-}
-
-message DownloadMovieAutoResponse {
-  // удалось ли найти раздачи
-  bool found = 1;
-  // какие сезоны были поставлены на закачку
-  repeated uint32 seasons = 2;
-}
-
-message FindMovieTorrentsRequest {
-  // сквозной ID фильма/сериала
-  string id = 1;
-
-  // максимальное кол-во раздач в ответе
-  uint32 limit = 2;
-
-  // возможность указать конкретный сезон
-  optional uint32 season = 3;
-
-  // использовать сохраненный список просмотра для поиска раздачи
-  bool useWatchList = 4;
-}
-
-message FindTorrentsRequest {
-  // что ищем
-  string query = 1;
-
-  // сколько максимум раздач
-  uint32 limit = 2;
-
-  // строгое соответствие поисковому запросу
-  bool strong = 3;
-}
-
-message FindTorrentsResponse {
-  // найденные раздачи
-  repeated Torrent results = 1;
-}
-
-message DownloadTorrentRequest {
-  // ID раздачи
-  string torrentId = 1;
-
-  // Не скачивать, а воспроизводить контент на лету
-  bool watchOnline = 2;
+message MoviesGetResponse {
+  // информация о тайтле
+  MovieInfo info = 1;
 }
 
 // инфа о новых сезонах одного сериала
@@ -221,84 +271,8 @@ message TvSeriesUpdate {
 }
 
 // результат запроса обновления сериалов
-message GetTvSeriesUpdatesResponse {
+message MoviesGetUpdatesResponse {
   repeated TvSeriesUpdate updates = 1;
-}
-
-// запрос доступных киношек в библиотеке
-message GetMoviesRequest {
-  // типы медиа которые стоит отобразить
-  optional MovieType type = 1;
-
-  // поиск по жанрам
-  optional string genre = 2;
-}
-
-message FilmLayout {
-  string torrentID = 1;
-  repeated string files = 2;
-}
-
-message TvSeriesLayout {
-  message Season {
-    repeated string files = 1;
-  }
-  map<uint32, Season> seasons = 1;
-}
-
-message Movie {
-  // ID фильма или сериала
-  string id = 1;
-
-  // общая информация о Movie
-  MovieInfo info = 2;
-
-  // набор файлов фильма
-  optional FilmLayout film = 3;
-
-  // набор файлов сериала
-  optional TvSeriesLayout tvSeries = 4;
-
-  // Занимаемый на диске размер (МБ)
-  uint64 size = 5;
-}
-
-message GetMoviesResponse {
-  repeated Movie result = 1;
-}
-
-message GetMovieRequest {
-  string ID = 1;
-}
-
-message GetMovieResponse {
-  optional Movie result = 1;
-}
-
-message DeleteRequest {
-  string ID = 1;
-}
-
-message UploadMovieRequest {
-  // ID фильма или сериала
-  string id = 1;
-
-  // общая информация о Movie
-  MovieInfo info = 2;
-
-  // номер сезона, если есть
-  optional uint32 seasonNo = 3;
-
-  // торрент-файл для загрузки
-  bytes torrentFile = 4;
-
-  // смотреть онлайн, без загрузки
-  bool watchOnline = 5;
-}
-
-message WatchLaterRequest {
-  // идентификатор медиа
-  string id = 1;
 }
 
 message Artist {
@@ -319,61 +293,38 @@ message Album {
 	uint32 tracks = 8;
 }
 
-message SearchMusicResponse {
+message MusicSearchRequest {
+  // текстовая строка поиска
+  string text = 1;
+
+  // ограничение на кол-во результатов
+  uint32 limit = 2;
+}
+
+message MusicSearchResponse {
   repeated Artist artists = 1;
   repeated Album albums = 2;
 }
 
-// скачать указанный фильм, или сезон сериала
-message DownloadMusicAutoRequest {
-  // сквозной ID исполнителя или альбома
-  string id = 1;
+message MusicUpdates {
+  // описание артиста
+  Artist artist = 1;
+  // новые найденные альбомы
+  repeated Album albums = 2;
+} 
 
-  // использовать сохраненный список просмотра для поиска раздачи (только для исполнителей)
-  bool useWatchList = 2;
+message MusicGetUpdatesResponse {
+  repeated MusicUpdates updates = 1;
 }
 
-message DownloadMusicAutoResponse {
-  bool found = 1;
-}
+message OtherSearchRequest {
+  // текст для поиска
+  string text = 1;
 
-message FindMusicTorrentsRequest {
-  // сквозной ID исполнителя/альбома
-  string id = 1;
-
-  // максимальное кол-во раздач в ответе
+  // ограничение кол-ва результатов
   uint32 limit = 2;
-
-  // использовать сохраненный список просмотра для поиска раздачи
-  bool useWatchList = 3;
 }
 
-message UploadMusicRequest {
-  // ID исполнителя или альбома
-  string id = 1;
-
-  // торрент-файл для загрузки
-  bytes torrentFile = 2;
-
-  // слушать онлайн, без загрузки
-  bool listenOnline = 3;
+message OtherSearchResponse {
+  repeated Torrent torrents = 1;
 }
-
-message ListArtistsResponse {
-  repeated Artist artists = 1;
-}
-
-message GetAlbumsUpdatesResponse {
-  repeated Album updates = 1;
-}
-
-message ListenLaterRequest {
-  // ID альбома или исполнителя
-  string id = 1;
-}
-
-message GetListenListResponse {
-  repeated Artist artists = 1;
-}
-
-
